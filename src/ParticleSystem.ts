@@ -1,4 +1,7 @@
-import { LinearSpline } from "./LinearSpline.js";
+import { BufferGeometry, ShaderMaterial, AdditiveBlending, Points, Vector3, PerspectiveCamera, TextureLoader, Color, Float32BufferAttribute } from "three";
+
+import { LinearSpline } from "./LinearSpline";
+
 
 
 const _VS = `
@@ -34,21 +37,29 @@ void main() {
 }`;
 
 export class ParticleSystem {
-    constructor(params) {
+    _geometry: BufferGeometry;
+    _material: ShaderMaterial;
+    _camera: PerspectiveCamera;
+    _particles: any[];
+    _points: Points<BufferGeometry, any>;
+    _alphaSpline: LinearSpline;
+    _colourSpline: LinearSpline;
+    _sizeSpline: LinearSpline;
+    constructor(params: any) {
         const uniforms = {
             diffuseTexture: {
-                value: new THREE.TextureLoader().load('./resources/fire.png')
+                value: new TextureLoader().load('./resources/fire.png')
             },
             pointMultiplier: {
                 value: window.innerHeight / (2.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))
             }
         };
 
-        this._material = new THREE.ShaderMaterial({
+        this._material = new ShaderMaterial({
             uniforms: uniforms,
             vertexShader: _VS,
             fragmentShader: _FS,
-            blending: THREE.AdditiveBlending,
+            blending: AdditiveBlending,
             depthTest: true,
             depthWrite: false,
             transparent: true,
@@ -58,17 +69,17 @@ export class ParticleSystem {
         this._camera = params.camera;
         this._particles = [];
 
-        this._geometry = new THREE.BufferGeometry();
-        this._geometry.setAttribute('position', new THREE.Float32BufferAttribute([], 3));
-        this._geometry.setAttribute('size', new THREE.Float32BufferAttribute([], 1));
-        this._geometry.setAttribute('colour', new THREE.Float32BufferAttribute([], 4));
-        this._geometry.setAttribute('angle', new THREE.Float32BufferAttribute([], 1));
+        this._geometry = new BufferGeometry();
+        this._geometry.setAttribute('position', new Float32BufferAttribute([], 3));
+        this._geometry.setAttribute('size', new Float32BufferAttribute([], 1));
+        this._geometry.setAttribute('colour', new Float32BufferAttribute([], 4));
+        this._geometry.setAttribute('angle', new Float32BufferAttribute([], 1));
 
-        this._points = new THREE.Points(this._geometry, this._material);
+        this._points = new Points(this._geometry, this._material);
 
         params.parent.add(this._points);
 
-        this._alphaSpline = new LinearSpline((t, a, b) => {
+        this._alphaSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
         this._alphaSpline.AddPoint(0.0, 0.0);
@@ -76,14 +87,14 @@ export class ParticleSystem {
         this._alphaSpline.AddPoint(0.6, 1.0);
         this._alphaSpline.AddPoint(1.0, 0.0);
 
-        this._colourSpline = new LinearSpline((t, a, b) => {
+        this._colourSpline = new LinearSpline((t: any, a: { clone: () => any; }, b: any) => {
             const c = a.clone();
             return c.lerp(b, t);
         });
-        this._colourSpline.AddPoint(0.0, new THREE.Color(0xFFFF80));
-        this._colourSpline.AddPoint(1.0, new THREE.Color(0xFF8080));
+        this._colourSpline.AddPoint(0.0, new Color(0xFFFF80));
+        this._colourSpline.AddPoint(1.0, new Color(0xFF8080));
 
-        this._sizeSpline = new LinearSpline((t, a, b) => {
+        this._sizeSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
         this._sizeSpline.AddPoint(0.0, 1.0);
@@ -95,28 +106,28 @@ export class ParticleSystem {
         this._UpdateGeometry();
     }
 
-    _onKeyUp(event) {
+    _onKeyUp(event: KeyboardEvent) {
         switch (event.keyCode) {
             case 32: // SPACE
-                this._AddParticles();
+                this._AddParticles(undefined);
                 break;
         }
     }
 
-    _AddParticles(timeElapsed) {
+    _AddParticles(timeElapsed?: number) {
         const life = (Math.random() * 0.75 + 0.25) * 10.0;
         this._particles.push({
-            position: new THREE.Vector3(
+            position: new Vector3(
                 (Math.random() * 2 - 1) * 1.0,
                 (Math.random() * 2 - 1) * 1.0,
                 (Math.random() * 2 - 1) * 1.0),
             size: (Math.random() * 0.5 + 0.5) * 4.0,
-            colour: new THREE.Color(),
+            colour: new Color(),
             alpha: 1.0,
             life: life,
             maxLife: life,
             rotation: Math.random() * 2.0 * Math.PI,
-            velocity: new THREE.Vector3(0, -15, 0),
+            velocity: new Vector3(0, -15, 0),
         });
     }
 
@@ -134,13 +145,13 @@ export class ParticleSystem {
         }
 
         this._geometry.setAttribute(
-            'position', new THREE.Float32BufferAttribute(positions, 3));
+            'position', new Float32BufferAttribute(positions, 3));
         this._geometry.setAttribute(
-            'size', new THREE.Float32BufferAttribute(sizes, 1));
+            'size', new Float32BufferAttribute(sizes, 1));
         this._geometry.setAttribute(
-            'colour', new THREE.Float32BufferAttribute(colours, 4));
+            'colour', new Float32BufferAttribute(colours, 4));
         this._geometry.setAttribute(
-            'angle', new THREE.Float32BufferAttribute(angles, 1));
+            'angle', new Float32BufferAttribute(angles, 1));
 
         this._geometry.attributes.position.needsUpdate = true;
         this._geometry.attributes.size.needsUpdate = true;
@@ -148,7 +159,7 @@ export class ParticleSystem {
         this._geometry.attributes.angle.needsUpdate = true;
     }
 
-    _UpdateParticles(timeElapsed) {
+    _UpdateParticles(timeElapsed: number) {
         for (let p of this._particles) {
             p.life -= timeElapsed;
         }
@@ -191,7 +202,7 @@ export class ParticleSystem {
         });
     }
 
-    Step(timeElapsed) {
+    Step(timeElapsed: any) {
         this._AddParticles(timeElapsed);
         this._UpdateParticles(timeElapsed);
         this._UpdateGeometry();

@@ -1,21 +1,30 @@
 
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
-import { ParticleSystem } from './ParticleSystem.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
+import { AmbientLight, Camera, CubeTextureLoader, DirectionalLight, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { PCFSoftShadowMap } from 'three';
+import { ParticleSystem } from './ParticleSystem';
 
 class ParticleSystemDemo {
+
+  _threejs!: WebGLRenderer;
+  _camera!: PerspectiveCamera;
+  _scene: any;
+  _particles!: ParticleSystem;
+  _previousRAF!: number | null;
+
   constructor() {
     this._Initialize();
   }
 
   _Initialize() {
-    this._threejs = new THREE.WebGLRenderer({
+    this._threejs = new WebGLRenderer({
       antialias: true,
     });
     this._threejs.shadowMap.enabled = true;
-    this._threejs.shadowMap.type = THREE.PCFSoftShadowMap;
+    this._threejs.shadowMap.type = PCFSoftShadowMap;
     this._threejs.setPixelRatio(window.devicePixelRatio);
     this._threejs.setSize(window.innerWidth, window.innerHeight);
 
@@ -29,12 +38,12 @@ class ParticleSystemDemo {
     const aspect = 1920 / 1080;
     const near = 1.0;
     const far = 1000.0;
-    this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    this._camera = new PerspectiveCamera(fov, aspect, near, far);
     this._camera.position.set(25, 10, 0);
 
-    this._scene = new THREE.Scene();
+    this._scene = new Scene();
 
-    let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    let light = new DirectionalLight(0xFFFFFF, 1.0);
     light.position.set(20, 100, 10);
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
@@ -51,15 +60,15 @@ class ParticleSystemDemo {
     light.shadow.camera.bottom = -100;
     this._scene.add(light);
 
-    light = new THREE.AmbientLight(0x101010);
-    this._scene.add(light);
+    const ambientlight = new AmbientLight(0x101010);
+    this._scene.add(ambientlight);
 
     const controls = new OrbitControls(
       this._camera, this._threejs.domElement);
     controls.target.set(0, 0, 0);
     controls.update();
 
-    const loader = new THREE.CubeTextureLoader();
+    const loader = new CubeTextureLoader();
     const texture = loader.load([
       './resources/posx.jpg',
       './resources/negx.jpg',
@@ -111,7 +120,7 @@ class ParticleSystemDemo {
     });
   }
 
-  _Step(timeElapsed) {
+  _Step(timeElapsed: number) {
     const timeElapsedS = timeElapsed * 0.001;
 
     this._particles.Step(timeElapsedS);

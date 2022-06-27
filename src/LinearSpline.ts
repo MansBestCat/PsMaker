@@ -1,6 +1,8 @@
 
 export class LinearSpline {
-    constructor(lerp) {
+    _points: any[];
+    _lerp: any;
+    constructor(lerp: any) {
         this._points = [];
         this._lerp = lerp;
     }
