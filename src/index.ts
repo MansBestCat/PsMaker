@@ -6,6 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { AmbientLight, Camera, CubeTextureLoader, DirectionalLight, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { PCFSoftShadowMap } from 'three';
 import { ParticleSystemBase } from './ParticleSystemBase';
+import { RocketExhaustParticleSystem } from './ParticleSystems/RocketExhaustParticleSystem';
 
 class ParticleSystemDemo {
 
@@ -79,7 +80,7 @@ class ParticleSystemDemo {
     ]);
     this._scene.background = texture;
 
-    this._particles = new ParticleSystemBase({
+    this._particles = new RocketExhaustParticleSystem({
       parent: this._scene,
       camera: this._camera,
     });
