@@ -36,7 +36,7 @@ void main() {
   gl_FragColor = texture2D(diffuseTexture, coords) * vColour;
 }`;
 
-export class ParticleSystem {
+export class ParticleSystemBase {
     _geometry: BufferGeometry;
     _material: ShaderMaterial;
     _camera: PerspectiveCamera;

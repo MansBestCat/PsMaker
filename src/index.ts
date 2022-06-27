@@ -5,14 +5,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import { AmbientLight, Camera, CubeTextureLoader, DirectionalLight, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { PCFSoftShadowMap } from 'three';
-import { ParticleSystem } from './ParticleSystem';
+import { ParticleSystemBase } from './ParticleSystemBase';
 
 class ParticleSystemDemo {
 
   _threejs!: WebGLRenderer;
   _camera!: PerspectiveCamera;
   _scene: any;
-  _particles!: ParticleSystem;
+  _particles!: ParticleSystemBase;
   _previousRAF!: number | null;
 
   constructor() {
@@ -79,7 +79,7 @@ class ParticleSystemDemo {
     ]);
     this._scene.background = texture;
 
-    this._particles = new ParticleSystem({
+    this._particles = new ParticleSystemBase({
       parent: this._scene,
       camera: this._camera,
     });
