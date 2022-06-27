@@ -104,29 +104,20 @@ export class ParticleSystem {
     }
 
     _AddParticles(timeElapsed) {
-        if (!this.gdfsghk) {
-            this.gdfsghk = 0.0;
-        }
-        this.gdfsghk += timeElapsed;
-        const n = Math.floor(this.gdfsghk * 75.0);
-        this.gdfsghk -= n / 75.0;
-
-        for (let i = 0; i < n; i++) {
-            const life = (Math.random() * 0.75 + 0.25) * 10.0;
-            this._particles.push({
-                position: new THREE.Vector3(
-                    (Math.random() * 2 - 1) * 1.0,
-                    (Math.random() * 2 - 1) * 1.0,
-                    (Math.random() * 2 - 1) * 1.0),
-                size: (Math.random() * 0.5 + 0.5) * 4.0,
-                colour: new THREE.Color(),
-                alpha: 1.0,
-                life: life,
-                maxLife: life,
-                rotation: Math.random() * 2.0 * Math.PI,
-                velocity: new THREE.Vector3(0, -15, 0),
-            });
-        }
+        const life = (Math.random() * 0.75 + 0.25) * 10.0;
+        this._particles.push({
+            position: new THREE.Vector3(
+                (Math.random() * 2 - 1) * 1.0,
+                (Math.random() * 2 - 1) * 1.0,
+                (Math.random() * 2 - 1) * 1.0),
+            size: (Math.random() * 0.5 + 0.5) * 4.0,
+            colour: new THREE.Color(),
+            alpha: 1.0,
+            life: life,
+            maxLife: life,
+            rotation: Math.random() * 2.0 * Math.PI,
+            velocity: new THREE.Vector3(0, -15, 0),
+        });
     }
 
     _UpdateGeometry() {
