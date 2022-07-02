@@ -32,7 +32,15 @@ export abstract class ParticleSystemBase {
         }
     }
 
+    Step(timeElapsed: any) {
+        this._AddParticles(timeElapsed);
+        this._UpdateParticles(timeElapsed);
+        this._UpdateGeometry();
+    }
+
     abstract _AddParticles(timeElapsed?: number): void;
+
+    abstract _UpdateParticles(timeElapsed: number): void;
 
     _UpdateGeometry() {
         const positions = [];
@@ -62,11 +70,4 @@ export abstract class ParticleSystemBase {
         this._geometry.attributes.angle.needsUpdate = true;
     }
 
-    abstract _UpdateParticles(timeElapsed: number): void;
-
-    Step(timeElapsed: any) {
-        this._AddParticles(timeElapsed);
-        this._UpdateParticles(timeElapsed);
-        this._UpdateGeometry();
-    }
 }
