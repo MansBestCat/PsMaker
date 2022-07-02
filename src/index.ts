@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
-import { AmbientLight, Camera, CubeTextureLoader, DirectionalLight, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { AmbientLight, DirectionalLight, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { PCFSoftShadowMap } from 'three';
 import { ParticleSystemBase } from './ParticleSystemBase';
 import { RocketExhaustParticleSystem } from './ParticleSystems/RocketExhaustParticleSystem';
@@ -70,37 +70,15 @@ class ParticleSystemDemo {
     controls.target.set(0, 0, 0);
     controls.update();
 
-    // const loader = new CubeTextureLoader();
-    // const texture = loader.load([
-    //   './resources/posx.jpg',
-    //   './resources/negx.jpg',
-    //   './resources/posy.jpg',
-    //   './resources/negy.jpg',
-    //   './resources/posz.jpg',
-    //   './resources/negz.jpg',
-    // ]);
-    // this._scene.background = texture;
-
     this._particles = new SparksParticleSystem({
       parent: this._scene,
       camera: this._camera,
     });
 
-    this._LoadModel();
-
     this._previousRAF = null;
     this._RAF();
   }
 
-  _LoadModel() {
-    const loader = new GLTFLoader();
-    loader.load('./resources/rocket/Rocket_Ship_01.gltf', (gltf) => {
-      gltf.scene.traverse(c => {
-        c.castShadow = true;
-      });
-      this._scene.add(gltf.scene);
-    });
-  }
 
   _OnWindowResize() {
     this._camera.aspect = window.innerWidth / window.innerHeight;
