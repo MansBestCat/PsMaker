@@ -31,6 +31,8 @@ export class SparksParticleSystem extends ParticleSystemBase {
     _alphaSpline: LinearSpline;
     _colourSpline: LinearSpline;
 
+    timerCounter = 0;
+
     constructor(params: any) {
         super(params);
 
@@ -71,7 +73,12 @@ export class SparksParticleSystem extends ParticleSystemBase {
         this._UpdateGeometry();
     }
 
-    _AddParticles(timeElapsed?: number) {
+    _AddParticles(timeElapsed: number) {
+        this.timerCounter += timeElapsed;
+        if (this.timerCounter < 0.1) {
+            return;
+        }
+        this.timerCounter = 0;
         const life = (Math.random() * 0.75 + 0.25) * 6.0;
         this._particles.push({
             position: new Vector3(0, 0, 0),
@@ -83,7 +90,7 @@ export class SparksParticleSystem extends ParticleSystemBase {
             rotation: Math.random() * 2.0 * Math.PI
         });
         this._particles.forEach(particle => {
-            particle.velocity = new Vector3(Math.cos(particle.rotation), 0.01, Math.sin(particle.rotation));
+            particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
         })
     }
 
@@ -104,7 +111,7 @@ export class SparksParticleSystem extends ParticleSystemBase {
 
             p.position.add(p.velocity.clone().multiplyScalar(timeElapsed * 3));
             const distance = p.position.length();
-            p.position.y = Math.abs(Math.sin(distance)) * (1 - t) * 2;
+            p.position.y = Math.abs(Math.sin(distance)) * (1 - t);
 
         }
 
