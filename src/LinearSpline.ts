@@ -7,11 +7,11 @@ export class LinearSpline {
         this._lerp = lerp;
     }
 
-    AddPoint(t, d) {
+    AddPoint(t: number, d: any) {
         this._points.push([t, d]);
     }
 
-    Get(t) {
+    Get(t: number) {
         let p1 = 0;
 
         for (let i = 0; i < this._points.length; i++) {
