@@ -7,6 +7,7 @@ import { AmbientLight, Camera, CubeTextureLoader, DirectionalLight, PerspectiveC
 import { PCFSoftShadowMap } from 'three';
 import { ParticleSystemBase } from './ParticleSystemBase';
 import { RocketExhaustParticleSystem } from './ParticleSystems/RocketExhaustParticleSystem';
+import { SparksParticleSystem } from './ParticleSystems/SparksParticleSystem';
 
 class ParticleSystemDemo {
 
@@ -69,18 +70,18 @@ class ParticleSystemDemo {
     controls.target.set(0, 0, 0);
     controls.update();
 
-    const loader = new CubeTextureLoader();
-    const texture = loader.load([
-      './resources/posx.jpg',
-      './resources/negx.jpg',
-      './resources/posy.jpg',
-      './resources/negy.jpg',
-      './resources/posz.jpg',
-      './resources/negz.jpg',
-    ]);
-    this._scene.background = texture;
+    // const loader = new CubeTextureLoader();
+    // const texture = loader.load([
+    //   './resources/posx.jpg',
+    //   './resources/negx.jpg',
+    //   './resources/posy.jpg',
+    //   './resources/negy.jpg',
+    //   './resources/posz.jpg',
+    //   './resources/negz.jpg',
+    // ]);
+    // this._scene.background = texture;
 
-    this._particles = new RocketExhaustParticleSystem({
+    this._particles = new SparksParticleSystem({
       parent: this._scene,
       camera: this._camera,
     });
