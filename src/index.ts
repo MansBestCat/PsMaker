@@ -15,7 +15,7 @@ class ParticleSystemDemo {
   _threejs!: WebGLRenderer;
   _camera!: PerspectiveCamera;
   _scene: any;
-  _particles!: ParticleSystemBase;
+  particleSystem!: ParticleSystemBase;
   _previousRAF!: number | null;
 
   constructor() {
@@ -71,7 +71,9 @@ class ParticleSystemDemo {
     controls.target.set(0, 0, 0);
     controls.update();
 
-    this._particles = new SmokePuff({
+    document.addEventListener('mousemove', () => this.addParticles(), false);
+
+    this.particleSystem = new SmokePuff({
       parent: this._scene,
       camera: this._camera,
     });
@@ -80,6 +82,9 @@ class ParticleSystemDemo {
     this._RAF();
   }
 
+  addParticles() {
+    this.particleSystem.AddParticles();
+  }
 
   _OnWindowResize() {
     this._camera.aspect = window.innerWidth / window.innerHeight;
@@ -104,7 +109,7 @@ class ParticleSystemDemo {
   _Step(timeElapsed: number) {
     const timeElapsedS = timeElapsed * 0.001;
 
-    this._particles.Step(timeElapsedS);
+    this.particleSystem.Step(timeElapsedS);
   }
 }
 

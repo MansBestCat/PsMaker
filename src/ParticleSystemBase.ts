@@ -24,23 +24,15 @@ export abstract class ParticleSystemBase {
 
     }
 
-    _onKeyUp(event: KeyboardEvent) {
-        switch (event.keyCode) {
-            case 32: // SPACE
-                this._AddParticles(undefined);
-                break;
-        }
-    }
-
     Step(timeElapsed: any) {
-        this._AddParticles(timeElapsed);
-        this._UpdateParticles(timeElapsed);
+        //this.AddParticlesGate(timeElapsed);
+        this.UpdateParticles(timeElapsed);
         this._UpdateGeometry();
     }
 
-    abstract _AddParticles(timeElapsed?: number): void;
-
-    abstract _UpdateParticles(timeElapsed: number): void;
+    abstract AddParticlesGate(timeElapsed?: number): void;
+    abstract AddParticles(): void;
+    abstract UpdateParticles(timeElapsed: number): void;
 
     _UpdateGeometry() {
         const positions = [];

@@ -37,6 +37,8 @@ void main() {
 }`;
 
 export class SmokePuff extends ParticleSystemBase {
+    particleLife = 0.4;
+    initialVelocity = 15;
 
     _alphaSpline: LinearSpline;
     _colourSpline: LinearSpline;
@@ -74,8 +76,7 @@ export class SmokePuff extends ParticleSystemBase {
             return a + t * (b - a);
         });
         this._alphaSpline.AddPoint(0.0, 0.0);
-        this._alphaSpline.AddPoint(0.1, 1.0);
-        this._alphaSpline.AddPoint(0.6, 1.0);
+        this._alphaSpline.AddPoint(0.2, 0.6);
         this._alphaSpline.AddPoint(1.0, 0.0);
 
         this._colourSpline = new LinearSpline((t: any, a: { clone: () => any; }, b: any) => {
@@ -88,37 +89,38 @@ export class SmokePuff extends ParticleSystemBase {
         this._sizeSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this._sizeSpline.AddPoint(0.0, 1.0);
-        this._sizeSpline.AddPoint(1.0, 5.0);
-
-        document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
+        this._sizeSpline.AddPoint(0.0, 0.0);
+        this._sizeSpline.AddPoint(1.0, 35.0);
 
         this._UpdateGeometry();
     }
 
-    _AddParticles(timeElapsed: number) {
+    AddParticlesGate(timeElapsed: number) {
         this.timerCounter += timeElapsed;
-        if (this.timerCounter < 0.1) {
+        if (this.timerCounter < 0.01) {
             return;
         }
         this.timerCounter = 0;
-        const life = 3;
+        this.AddParticles();
+    }
+
+    AddParticles() {
         this._particles.push({
             position: new Vector3(0, 0, 0),
             size: 2,
             colour: new Color(),
             alpha: 1.0,
-            life: life,
-            maxLife: life,
+            life: this.particleLife,
+            maxLife: this.particleLife,
             rotation: Math.random() * 2.0 * Math.PI,
         });
         this._particles.forEach(particle => {
-            const v = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() * 3 + 1);
+            const v = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() * this.initialVelocity);
             particle.velocity = v;
         });
     }
 
-    _UpdateParticles(timeElapsed: number): void {
+    UpdateParticles(timeElapsed: number): void {
         for (let p of this._particles) {
             p.life -= timeElapsed;
         }
@@ -130,7 +132,7 @@ export class SmokePuff extends ParticleSystemBase {
         for (let p of this._particles) {
             const t = 1.0 - p.life / p.maxLife;
 
-            //p.rotation += timeElapsed * 0.5;
+            p.rotation += timeElapsed * 0.5;
             p.alpha = this._alphaSpline.Get(t);
             p.currentSize = p.size; // * this._sizeSpline.Get(t);
             p.colour.copy(this._colourSpline.Get(t));

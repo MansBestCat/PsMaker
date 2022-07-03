@@ -68,12 +68,10 @@ export class Sparks extends ParticleSystemBase {
         this._colourSpline.AddPoint(0.0, new Color(0xFFFF80));
         this._colourSpline.AddPoint(1.0, new Color(0xFF8080));
 
-        document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
-
         this._UpdateGeometry();
     }
 
-    _AddParticles(timeElapsed: number) {
+    AddParticlesGate(timeElapsed: number) {
         this.timerCounter += timeElapsed;
         if (this.timerCounter < 0.1) {
             return;
@@ -94,7 +92,7 @@ export class Sparks extends ParticleSystemBase {
         });
     }
 
-    _UpdateParticles(timeElapsed: number): void {
+    UpdateParticles(timeElapsed: number): void {
         for (let p of this._particles) {
             p.life -= timeElapsed;
         }

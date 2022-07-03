@@ -91,12 +91,10 @@ export class RocketExhaust extends ParticleSystemBase {
         this._sizeSpline.AddPoint(0.5, 5.0);
         this._sizeSpline.AddPoint(1.0, 1.0);
 
-        document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
-
         this._UpdateGeometry();
     }
 
-    _AddParticles(timeElapsed?: number) {
+    AddParticlesGate(timeElapsed?: number) {
         const life = (Math.random() * 0.75 + 0.25) * 10.0;
         this._particles.push({
             position: new Vector3(
@@ -113,7 +111,7 @@ export class RocketExhaust extends ParticleSystemBase {
         });
     }
 
-    _UpdateParticles(timeElapsed: number): void {
+    UpdateParticles(timeElapsed: number): void {
         for (let p of this._particles) {
             p.life -= timeElapsed;
         }
