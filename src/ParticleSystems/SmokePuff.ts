@@ -1,4 +1,4 @@
-import { Vector3, Color, AdditiveBlending, ShaderMaterial, TextureLoader, Points } from "three";
+import { Vector3, Color, ShaderMaterial, TextureLoader, Points, NormalBlending } from "three";
 import { LinearSpline } from "../LinearSpline";
 import { ParticleSystemBase } from "../ParticleSystemBase";
 
@@ -36,11 +36,12 @@ void main() {
   gl_FragColor = texture2D(diffuseTexture, coords) * vColour;
 }`;
 
-export class RocketExhaustParticleSystem extends ParticleSystemBase {
+export class SmokePuff extends ParticleSystemBase {
 
     _alphaSpline: LinearSpline;
     _colourSpline: LinearSpline;
     _sizeSpline: LinearSpline;
+    timerCounter = 0;
 
     constructor(params: any) {
         super(params);
@@ -58,7 +59,7 @@ export class RocketExhaustParticleSystem extends ParticleSystemBase {
             uniforms: uniforms,
             vertexShader: _VS,
             fragmentShader: _FS,
-            blending: AdditiveBlending,
+            blending: NormalBlending,
             depthTest: true,
             depthWrite: false,
             transparent: true,
@@ -88,28 +89,32 @@ export class RocketExhaustParticleSystem extends ParticleSystemBase {
             return a + t * (b - a);
         });
         this._sizeSpline.AddPoint(0.0, 1.0);
-        this._sizeSpline.AddPoint(0.5, 5.0);
-        this._sizeSpline.AddPoint(1.0, 1.0);
+        this._sizeSpline.AddPoint(1.0, 5.0);
 
         document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
 
         this._UpdateGeometry();
     }
 
-    _AddParticles(timeElapsed?: number) {
-        const life = (Math.random() * 0.75 + 0.25) * 10.0;
+    _AddParticles(timeElapsed: number) {
+        this.timerCounter += timeElapsed;
+        if (this.timerCounter < 0.1) {
+            return;
+        }
+        this.timerCounter = 0;
+        const life = 3;
         this._particles.push({
-            position: new Vector3(
-                (Math.random() * 2 - 1) * 1.0,
-                (Math.random() * 2 - 1) * 1.0,
-                (Math.random() * 2 - 1) * 1.0),
-            size: (Math.random() * 0.5 + 0.5) * 4.0,
+            position: new Vector3(0, 0, 0),
+            size: 2,
             colour: new Color(),
             alpha: 1.0,
             life: life,
             maxLife: life,
             rotation: Math.random() * 2.0 * Math.PI,
-            velocity: new Vector3(0, -15, 0),
+        });
+        this._particles.forEach(particle => {
+            const v = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() * 3 + 1);
+            particle.velocity = v;
         });
     }
 
@@ -125,34 +130,28 @@ export class RocketExhaustParticleSystem extends ParticleSystemBase {
         for (let p of this._particles) {
             const t = 1.0 - p.life / p.maxLife;
 
-            p.rotation += timeElapsed * 0.5;
+            //p.rotation += timeElapsed * 0.5;
             p.alpha = this._alphaSpline.Get(t);
-            p.currentSize = p.size * this._sizeSpline.Get(t);
+            p.currentSize = p.size; // * this._sizeSpline.Get(t);
             p.colour.copy(this._colourSpline.Get(t));
 
             p.position.add(p.velocity.clone().multiplyScalar(timeElapsed));
 
-            const drag = p.velocity.clone();
-            drag.multiplyScalar(timeElapsed * 0.1);
-            drag.x = Math.sign(p.velocity.x) * Math.min(Math.abs(drag.x), Math.abs(p.velocity.x));
-            drag.y = Math.sign(p.velocity.y) * Math.min(Math.abs(drag.y), Math.abs(p.velocity.y));
-            drag.z = Math.sign(p.velocity.z) * Math.min(Math.abs(drag.z), Math.abs(p.velocity.z));
-            p.velocity.sub(drag);
         }
 
-        this._particles.sort((a, b) => {
-            const d1 = this._camera.position.distanceTo(a.position);
-            const d2 = this._camera.position.distanceTo(b.position);
+        // this._particles.sort((a, b) => {
+        //     const d1 = this._camera.position.distanceTo(a.position);
+        //     const d2 = this._camera.position.distanceTo(b.position);
 
-            if (d1 > d2) {
-                return -1;
-            }
+        //     if (d1 > d2) {
+        //         return -1;
+        //     }
 
-            if (d1 < d2) {
-                return 1;
-            }
+        //     if (d1 < d2) {
+        //         return 1;
+        //     }
 
-            return 0;
-        });
+        //     return 0;
+        // });
     }
 }

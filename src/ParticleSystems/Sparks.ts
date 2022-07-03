@@ -26,7 +26,7 @@ void main() {
   gl_FragColor = vec4(1.0,1.0,1.0,1.0);
 }`;
 
-export class SparksParticleSystem extends ParticleSystemBase {
+export class Sparks extends ParticleSystemBase {
 
     _alphaSpline: LinearSpline;
     _colourSpline: LinearSpline;

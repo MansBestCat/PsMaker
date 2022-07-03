@@ -6,9 +6,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { AmbientLight, DirectionalLight, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { PCFSoftShadowMap } from 'three';
 import { ParticleSystemBase } from './ParticleSystemBase';
-import { RocketExhaustParticleSystem } from './ParticleSystems/RocketExhaustParticleSystem';
-import { SparksParticleSystem } from './ParticleSystems/SparksParticleSystem';
-import { SmokePuffExplosion } from './ParticleSystems/SmokePuffExplosion';
+import { RocketExhaust } from './ParticleSystems/RocketExhaust';
+import { Sparks } from './ParticleSystems/Sparks';
+import { SmokePuff } from './ParticleSystems/SmokePuff';
 
 class ParticleSystemDemo {
 
@@ -71,7 +71,7 @@ class ParticleSystemDemo {
     controls.target.set(0, 0, 0);
     controls.update();
 
-    this._particles = new SmokePuffExplosion({
+    this._particles = new SmokePuff({
       parent: this._scene,
       camera: this._camera,
     });
