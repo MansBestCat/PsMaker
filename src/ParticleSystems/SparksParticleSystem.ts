@@ -91,7 +91,7 @@ export class SparksParticleSystem extends ParticleSystemBase {
         });
         this._particles.forEach(particle => {
             particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
-        })
+        });
     }
 
     _UpdateParticles(timeElapsed: number): void {
