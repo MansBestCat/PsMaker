@@ -76,7 +76,7 @@ export class SmokePuff extends ParticleSystemBase {
             return a + t * (b - a);
         });
         this._alphaSpline.AddPoint(0.0, 0.0);
-        this._alphaSpline.AddPoint(0.2, 0.6);
+        this._alphaSpline.AddPoint(0.3, 0.8);
         this._alphaSpline.AddPoint(1.0, 0.0);
 
         this._colourSpline = new LinearSpline((t: any, a: { clone: () => any; }, b: any) => {
@@ -90,7 +90,7 @@ export class SmokePuff extends ParticleSystemBase {
             return a + t * (b - a);
         });
         this._sizeSpline.AddPoint(0.0, 0.0);
-        this._sizeSpline.AddPoint(1.0, 35.0);
+        this._sizeSpline.AddPoint(1.0, 10.0);
 
         this._UpdateGeometry();
     }
@@ -113,6 +113,7 @@ export class SmokePuff extends ParticleSystemBase {
             life: this.particleLife,
             maxLife: this.particleLife,
             rotation: Math.random() * 2.0 * Math.PI,
+            velocity: new Vector3
         });
         this._particles.forEach(particle => {
             const v = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() * this.initialVelocity);
@@ -129,12 +130,14 @@ export class SmokePuff extends ParticleSystemBase {
             return p.life > 0.0;
         });
 
-        for (let p of this._particles) {
+        for (const p of this._particles) {
             const t = 1.0 - p.life / p.maxLife;
 
             p.rotation += timeElapsed * 0.5;
+
+            // update properties from splines
             p.alpha = this._alphaSpline.Get(t);
-            p.currentSize = p.size; // * this._sizeSpline.Get(t);
+            p.size = this._sizeSpline.Get(t);
             p.colour.copy(this._colourSpline.Get(t));
 
             p.position.add(p.velocity.clone().multiplyScalar(timeElapsed));

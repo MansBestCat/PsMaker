@@ -1,14 +1,22 @@
 import { BufferGeometry, ShaderMaterial, AdditiveBlending, Points, Vector3, PerspectiveCamera, TextureLoader, Color, Float32BufferAttribute } from "three";
 
-import { LinearSpline } from "./LinearSpline";
 
-
+export interface Particle {
+    alpha: number;
+    life: number;
+    maxLife: number;
+    position: Vector3;
+    size: number;
+    colour: Color;
+    rotation: number;
+    velocity: Vector3;
+}
 
 export abstract class ParticleSystemBase {
     _geometry: BufferGeometry;
     _material!: ShaderMaterial;
     _camera: PerspectiveCamera;
-    _particles: any[];
+    _particles: Particle[];
     _points!: Points<BufferGeometry, any>;
 
     constructor(params: any) {
@@ -43,7 +51,7 @@ export abstract class ParticleSystemBase {
         for (let p of this._particles) {
             positions.push(p.position.x, p.position.y, p.position.z);
             colours.push(p.colour.r, p.colour.g, p.colour.b, p.alpha);
-            sizes.push(p.currentSize);
+            sizes.push(p.size);
             angles.push(p.rotation);
         }
 
