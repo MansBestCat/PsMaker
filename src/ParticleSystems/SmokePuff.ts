@@ -43,6 +43,8 @@ export class SmokePuff extends ParticleSystemBase {
     _alphaSpline: LinearSpline;
     _colourSpline: LinearSpline;
     _sizeSpline: LinearSpline;
+    _velocitySpline: LinearSpline;
+
     timerCounter = 0;
 
     constructor(params: any) {
@@ -50,7 +52,7 @@ export class SmokePuff extends ParticleSystemBase {
 
         const uniforms = {
             diffuseTexture: {
-                value: new TextureLoader().load('./resources/fire.png')
+                value: new TextureLoader().load('./resources/smoke.png')
             },
             pointMultiplier: {
                 value: window.innerHeight / (2.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))
@@ -76,21 +78,28 @@ export class SmokePuff extends ParticleSystemBase {
             return a + t * (b - a);
         });
         this._alphaSpline.AddPoint(0.0, 0.0);
-        this._alphaSpline.AddPoint(0.3, 0.8);
+        this._alphaSpline.AddPoint(0.2, 0.7);
         this._alphaSpline.AddPoint(1.0, 0.0);
 
         this._colourSpline = new LinearSpline((t: any, a: { clone: () => any; }, b: any) => {
             const c = a.clone();
             return c.lerp(b, t);
         });
-        this._colourSpline.AddPoint(0.0, new Color(0xFFFF80));
-        this._colourSpline.AddPoint(1.0, new Color(0xFF8080));
+        this._colourSpline.AddPoint(0.0, new Color(0xFFFFFF));
+        this._colourSpline.AddPoint(1.0, new Color(0x999999));
 
         this._sizeSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
         this._sizeSpline.AddPoint(0.0, 0.0);
         this._sizeSpline.AddPoint(1.0, 10.0);
+
+        this._velocitySpline = new LinearSpline((t: number, a: number, b: number) => {
+            return a + t * (b - a);
+        });
+        this._velocitySpline.AddPoint(0.0, 3.0);
+        this._velocitySpline.AddPoint(0.2, 1.0);
+        this._velocitySpline.AddPoint(1.0, 0.0);
 
         this._UpdateGeometry();
     }
@@ -140,7 +149,7 @@ export class SmokePuff extends ParticleSystemBase {
             p.size = this._sizeSpline.Get(t);
             p.colour.copy(this._colourSpline.Get(t));
 
-            p.position.add(p.velocity.clone().multiplyScalar(timeElapsed));
+            p.position.add(p.velocity.clone().multiplyScalar(this._velocitySpline.Get(t) * timeElapsed));
 
         }
 
