@@ -1,6 +1,6 @@
 import { Vector3, Color, ShaderMaterial, TextureLoader, Points, NormalBlending } from "three";
 import { LinearSpline } from "../LinearSpline";
-import { ParticleSystemBase } from "../ParticleSystemBase";
+import { Particle, ParticleSystemBase } from "../ParticleSystemBase";
 
 
 
@@ -110,24 +110,21 @@ export class SmokePuff extends ParticleSystemBase {
             return;
         }
         this.timerCounter = 0;
-        this.AddParticles();
+        this.AddParticle();
     }
 
-    AddParticles() {
-        this._particles.push({
-            position: new Vector3(0, 0, 0),
-            size: 2,
-            colour: new Color(),
-            alpha: 1.0,
-            life: this.particleLife,
-            maxLife: this.particleLife,
-            rotation: Math.random() * 2.0 * Math.PI,
-            velocity: new Vector3
-        });
-        this._particles.forEach(particle => {
-            const v = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() * this.initialVelocity);
-            particle.velocity = v;
-        });
+    AddParticle() {
+        const particle = new Particle();
+        particle.size = 0
+        particle.position = new Vector3(0, 0, 0);
+        particle.colour = new Color();
+        particle.alpha = 1.0;
+        particle.life = this.particleLife;
+        particle.maxLife = this.particleLife;
+        particle.rotation = Math.random() * 2.0 * Math.PI;
+        particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() * this.initialVelocity);
+
+        this._particles.push(particle);
     }
 
     UpdateParticles(timeElapsed: number): void {

@@ -83,7 +83,7 @@ class ParticleSystemDemo {
   }
 
   addParticles() {
-    this.particleSystem.AddParticles();
+    this.particleSystem.AddParticle();
   }
 
   _OnWindowResize() {

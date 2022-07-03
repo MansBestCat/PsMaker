@@ -1,6 +1,6 @@
 import { Vector3, Color, AdditiveBlending, ShaderMaterial, TextureLoader, Points } from "three";
 import { LinearSpline } from "../LinearSpline";
-import { ParticleSystemBase } from "../ParticleSystemBase";
+import { Particle, ParticleSystemBase } from "../ParticleSystemBase";
 
 
 
@@ -27,6 +27,8 @@ void main() {
 }`;
 
 export class Sparks extends ParticleSystemBase {
+    particleMaxLife = 1;
+    initialVelocity = 15;
 
     _alphaSpline: LinearSpline;
     _colourSpline: LinearSpline;
@@ -77,19 +79,21 @@ export class Sparks extends ParticleSystemBase {
             return;
         }
         this.timerCounter = 0;
-        const life = (Math.random() * 0.75 + 0.25) * 6.0;
-        this._particles.push({
-            position: new Vector3(0, 0, 0),
-            size: 1,
-            colour: new Color(),
-            alpha: 1.0,
-            life: life,
-            maxLife: life,
-            rotation: Math.random() * 2.0 * Math.PI
-        });
-        this._particles.forEach(particle => {
-            particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
-        });
+        this.AddParticle();
+    }
+
+    AddParticle(): void {
+        const particle = new Particle();
+        particle.position = new Vector3(0, 0, 0);
+        particle.size = 1;
+        particle.colour = new Color();
+        particle.alpha = this._alphaSpline.Get(0);
+        particle.maxLife = Math.random() * this.particleMaxLife;
+        particle.life = particle.maxLife;
+        particle.rotation = Math.random() * 2.0 * Math.PI;
+        particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
+
+        this._particles.push(particle);
     }
 
     UpdateParticles(timeElapsed: number): void {

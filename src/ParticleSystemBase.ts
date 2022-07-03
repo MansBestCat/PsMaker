@@ -1,15 +1,15 @@
 import { BufferGeometry, ShaderMaterial, AdditiveBlending, Points, Vector3, PerspectiveCamera, TextureLoader, Color, Float32BufferAttribute } from "three";
 
 
-export interface Particle {
-    alpha: number;
-    life: number;
-    maxLife: number;
-    position: Vector3;
-    size: number;
-    colour: Color;
-    rotation: number;
-    velocity: Vector3;
+export class Particle {
+    alpha!: number;
+    life!: number;
+    maxLife!: number;
+    position!: Vector3;
+    size!: number;
+    colour!: Color;
+    rotation!: number;
+    velocity!: Vector3;
 }
 
 export abstract class ParticleSystemBase {
@@ -39,7 +39,7 @@ export abstract class ParticleSystemBase {
     }
 
     abstract AddParticlesGate(timeElapsed?: number): void;
-    abstract AddParticles(): void;
+    abstract AddParticle(): void;
     abstract UpdateParticles(timeElapsed: number): void;
 
     _UpdateGeometry() {
