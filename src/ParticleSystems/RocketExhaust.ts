@@ -47,7 +47,7 @@ export class RocketExhaust extends ParticleSystemBase {
 
         const uniforms = {
             diffuseTexture: {
-                value: new TextureLoader().load('./resources/fire.png')
+                value: new TextureLoader().load('./textures/fire.png')
             },
             pointMultiplier: {
                 value: window.innerHeight / (2.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))

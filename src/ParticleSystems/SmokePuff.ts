@@ -114,7 +114,7 @@ export class SmokePuff extends ParticleSystemBase {
     }
 
     init() {
-        new TextureLoader().loadAsync(`resources/smoke.png`).then((texture: Texture) => {
+        new TextureLoader().loadAsync(`textures/smoke.png`).then((texture: Texture) => {
             this.material.uniforms.diffuseTexture.value = texture;
         }).catch((err) => {
             console.error(`${Utility.timestamp()} Could not get texture`);
