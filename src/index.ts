@@ -1,14 +1,11 @@
 
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-
 
 import { AmbientLight, DirectionalLight, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { PCFSoftShadowMap } from 'three';
-import { ParticleSystemBase } from './ParticleSystemBase';
-import { RocketExhaust } from './ParticleSystems/RocketExhaust';
-import { Sparks } from './ParticleSystems/Sparks';
+import { ParticleSystemBase } from './ParticleSystems/ParticleSystemBase';
 import { SmokePuff } from './ParticleSystems/SmokePuff';
+import { Data } from './Data';
 
 class ParticleSystemDemo {
 
@@ -18,7 +15,7 @@ class ParticleSystemDemo {
   particleSystem!: ParticleSystemBase;
   _previousRAF!: number | null;
 
-  constructor() {
+  constructor(public data: Data) {
     this._Initialize();
   }
 
@@ -74,16 +71,15 @@ class ParticleSystemDemo {
     document.addEventListener('mousemove', () => this.addParticles(), false);
 
     this.particleSystem = new SmokePuff({
-      parent: this._scene,
-      camera: this._camera,
-    });
+      parent: this._scene, maxEmitterLife: 300, frequency: this.data.tickSize
+    }, this.data);
 
     this._previousRAF = null;
     this._RAF();
   }
 
   addParticles() {
-    this.particleSystem.AddParticle();
+    this.particleSystem.addParticle();
   }
 
   _OnWindowResize() {
@@ -109,7 +105,7 @@ class ParticleSystemDemo {
   _Step(timeElapsed: number) {
     const timeElapsedS = timeElapsed * 0.001;
 
-    this.particleSystem.Step(timeElapsedS);
+    this.particleSystem.tick(timeElapsedS);
   }
 }
 
@@ -117,5 +113,6 @@ class ParticleSystemDemo {
 let _APP = null;
 
 window.addEventListener('DOMContentLoaded', () => {
-  _APP = new ParticleSystemDemo();
+  const data = new Data()
+  _APP = new ParticleSystemDemo(data);
 });

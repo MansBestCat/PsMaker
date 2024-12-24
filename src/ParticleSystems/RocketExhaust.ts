@@ -1,6 +1,6 @@
 import { Vector3, Color, AdditiveBlending, ShaderMaterial, TextureLoader, Points } from "three";
-import { LinearSpline } from "../LinearSpline";
-import { ParticleSystemBase } from "../ParticleSystemBase";
+import { LinearSpline } from "../Utilitites/LinearSpline";
+import { ParticleSystemBase } from "./ParticleSystemBase";
 
 
 

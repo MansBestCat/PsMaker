@@ -1,6 +1,6 @@
 import { Vector3, Color, AdditiveBlending, ShaderMaterial, TextureLoader, Points } from "three";
-import { LinearSpline } from "../LinearSpline";
-import { Particle, ParticleSystemBase } from "../ParticleSystemBase";
+import { LinearSpline } from "../Utilitites/LinearSpline";
+import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
 
 
 
@@ -26,21 +26,21 @@ void main() {
   gl_FragColor = vec4(1.0,1.0,1.0,1.0);
 }`;
 
-export class Sparks extends ParticleSystemBase {
-    particleMaxLife = 1;
+export class SparkFountain extends ParticleSystemBase {
+    particleMaxLife = 1000; // ms
     initialVelocity = 15;
 
-    _alphaSpline: LinearSpline;
-    _colourSpline: LinearSpline;
+    alphaSpline: LinearSpline;
+    colorSpline: LinearSplineOut;
 
-    timerCounter = 0;
+    freqCounter = 0;
 
     constructor(params: any) {
         super(params);
 
         const uniforms = {};
 
-        this._material = new ShaderMaterial({
+        this.material = new ShaderMaterial({
             uniforms: uniforms,
             vertexShader: _VS,
             fragmentShader: _FS,
@@ -48,74 +48,63 @@ export class Sparks extends ParticleSystemBase {
             depthTest: true,
             depthWrite: false,
             transparent: true,
-            vertexColors: true
+            vertexColors: true,
+            name: "spark fountain"
         });
 
-        this._points = new Points(this._geometry, this._material);
+        this.points = new Points(this.geometry, this.material);
+        this.points.layers.set(Etype.TRANSIENT);
 
-        params.parent.add(this._points);
+        params.parent.add(this.points);
 
-        this._alphaSpline = new LinearSpline((t: number, a: number, b: number) => {
+        this.alphaSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this._alphaSpline.AddPoint(0.0, 0.0);
-        this._alphaSpline.AddPoint(0.1, 1.0);
-        this._alphaSpline.AddPoint(0.6, 1.0);
-        this._alphaSpline.AddPoint(1.0, 0.0);
+        this.alphaSpline.addPoint(0.0, 0.0);
+        this.alphaSpline.addPoint(0.1, 1.0);
+        this.alphaSpline.addPoint(0.6, 1.0);
+        this.alphaSpline.addPoint(1.0, 0.0);
 
-        this._colourSpline = new LinearSpline((t: any, a: { clone: () => any; }, b: any) => {
-            const c = a.clone();
-            return c.lerp(b, t);
+        this.colorSpline = new LinearSplineOut((t: number, a: Color, b: Color, result: Color) => {
+            result.copy(a);
+            return result.lerp(b, t);
         });
-        this._colourSpline.AddPoint(0.0, new Color(0xFFFF80));
-        this._colourSpline.AddPoint(1.0, new Color(0xFF8080));
+        this.colorSpline.addPoint(0.0, new Color(0xFFFF80));
+        this.colorSpline.addPoint(1.0, new Color(0xFF8080));
 
-        this._UpdateGeometry();
+        this.updateGeometry();
     }
 
-    AddParticlesGate(timeElapsed: number) {
-        this.timerCounter += timeElapsed;
-        if (this.timerCounter < 0.1) {
-            return;
-        }
-        this.timerCounter = 0;
-        this.AddParticle();
-    }
-
-    AddParticle(): void {
+    addParticle(): void {
         const particle = new Particle();
         particle.position = new Vector3(0, 0, 0);
         particle.size = 1;
         particle.colour = new Color();
-        particle.alpha = this._alphaSpline.Get(0);
+        particle.alpha = this.alphaSpline.get(0);
         particle.maxLife = Math.random() * this.particleMaxLife;
-        particle.life = particle.maxLife;
+        particle.life = 0;
         particle.rotation = Math.random() * 2.0 * Math.PI;
         particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
 
-        this._particles.push(particle);
+        this.particles.push(particle);
     }
 
-    UpdateParticles(timeElapsed: number): void {
-        for (let p of this._particles) {
-            p.life -= timeElapsed;
-        }
+    updateParticles(timeElapsed: number): void {
+        const color = new Color();
+        this.particles.forEach((p: Particle) => {
+            p.life += timeElapsed;
 
-        this._particles = this._particles.filter(p => {
-            return p.life > 0.0;
-        });
+            const t = Math.min(p.life / p.maxLife, 1); // t range is 0 to 1
 
-        for (let p of this._particles) {
-            const t = 1.0 - p.life / p.maxLife; // 0 to 1
-
-            p.alpha = this._alphaSpline.Get(t);
-            p.colour.copy(this._colourSpline.Get(t));
-
-            p.position.add(p.velocity.clone().multiplyScalar(timeElapsed * 3));
+            p.alpha = this.alphaSpline.get(t);
+            p.colour.copy(this.colorSpline.getResult(t, color));
+            p.position.add(p.velocity.clone().multiplyScalar(timeElapsed * 0.003));
             const distance = p.position.length();
             p.position.y = Math.abs(Math.sin(distance)) * (1 - t);
+        });
 
-        }
-
+        this.particles = this.particles.filter(p =>
+            p.life < p.maxLife
+        );
     }
 }

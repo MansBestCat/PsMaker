@@ -1,6 +1,10 @@
 import { Vector3, Color, ShaderMaterial, TextureLoader, Points, NormalBlending } from "three";
-import { LinearSpline } from "../LinearSpline";
-import { Particle, ParticleSystemBase } from "../ParticleSystemBase";
+import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
+import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
+import { Utility } from "../Utilitites/Utility";
+import { LinearSpline } from "../Utilitites/LinearSpline";
+import { Data } from "../Data";
+import { Etype } from "../Entities/Etype";
 
 
 
@@ -37,120 +41,119 @@ void main() {
 }`;
 
 export class SmokePuff extends ParticleSystemBase {
-    particleLife = 0.4;
-    initialVelocity = 15;
+    particleMaxLife = 400;
 
-    _alphaSpline: LinearSpline;
-    _colourSpline: LinearSpline;
-    _sizeSpline: LinearSpline;
-    _velocitySpline: LinearSpline;
+    alphaSpline: LinearSpline;
+    colorSpline: LinearSplineOut;
+    sizeSpline: LinearSpline;
+    velocitySpline: LinearSpline;
 
-    timerCounter = 0;
 
-    constructor(params: any) {
+    constructor(params: any, public data: Data) {
+
         super(params);
 
         const uniforms = {
             diffuseTexture: {
-                value: new TextureLoader().load('./resources/smoke.png')
+                value: undefined
             },
             pointMultiplier: {
                 value: window.innerHeight / (2.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))
             }
         };
 
-        this._material = new ShaderMaterial({
+        this.material = new ShaderMaterial({
             uniforms: uniforms,
             vertexShader: _VS,
             fragmentShader: _FS,
             blending: NormalBlending,
-            depthTest: true,
+            depthTest: false,
             depthWrite: false,
             transparent: true,
-            vertexColors: true
+            vertexColors: true,
+            name: "smoke puff"
         });
 
-        this._points = new Points(this._geometry, this._material);
+        this.points = new Points(this.geometry, this.material);
+        this.points.layers.set(Etype.TRANSIENT);
 
-        params.parent.add(this._points);
+        params.parent.add(this.points);
 
-        this._alphaSpline = new LinearSpline((t: number, a: number, b: number) => {
+        this.alphaSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this._alphaSpline.AddPoint(0.0, 0.0);
-        this._alphaSpline.AddPoint(0.2, 0.7);
-        this._alphaSpline.AddPoint(1.0, 0.0);
+        this.alphaSpline.addPoint(0.0, 0.7);
+        this.alphaSpline.addPoint(1.0, 0.0);
 
-        this._colourSpline = new LinearSpline((t: any, a: { clone: () => any; }, b: any) => {
-            const c = a.clone();
-            return c.lerp(b, t);
+        this.colorSpline = new LinearSplineOut((t: number, a: Color, b: Color, result: Color) => {
+            result.copy(a);
+            return result.lerp(b, t);
         });
-        this._colourSpline.AddPoint(0.0, new Color(0xFFFFFF));
-        this._colourSpline.AddPoint(1.0, new Color(0x999999));
+        this.colorSpline.addPoint(0.0, new Color(0xFFFFFF));
+        this.colorSpline.addPoint(1.0, new Color(0x999999));
 
-        this._sizeSpline = new LinearSpline((t: number, a: number, b: number) => {
+        this.sizeSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this._sizeSpline.AddPoint(0.0, 0.0);
-        this._sizeSpline.AddPoint(1.0, 10.0);
+        this.sizeSpline.addPoint(0.0, 3.0);
+        this.sizeSpline.addPoint(1.0, 5.0);
 
-        this._velocitySpline = new LinearSpline((t: number, a: number, b: number) => {
+        this.velocitySpline = new LinearSpline((t: number, a: number, b: number) => {
+            return a + t * (a - b);
+        });
+        this.velocitySpline.addPoint(0.0, 1.0);
+        this.velocitySpline.addPoint(1.0, 0.0);
+
+        this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this._velocitySpline.AddPoint(0.0, 3.0);
-        this._velocitySpline.AddPoint(0.2, 1.0);
-        this._velocitySpline.AddPoint(1.0, 0.0);
+        this.emitRateSpline.addPoint(0.0, 10);
+        this.emitRateSpline.addPoint(0.1, 1);
+        this.emitRateSpline.addPoint(1.0, 0);
 
-        this._UpdateGeometry();
+        this.updateGeometry();
     }
 
-    AddParticlesGate(timeElapsed: number) {
-        this.timerCounter += timeElapsed;
-        if (this.timerCounter < 0.01) {
-            return;
-        }
-        this.timerCounter = 0;
-        this.AddParticle();
+    init() {
+        Utility.asyncResourceGetter(this.data.commonMaterials.textures, "smoke.png").then((texture) => {
+            this.material.uniforms.diffuseTexture.value = texture;
+        });
     }
 
-    AddParticle() {
+    addParticle() {
         const particle = new Particle();
-        particle.size = 0
+        particle.size = 1.0;
         particle.position = new Vector3(0, 0, 0);
         particle.colour = new Color();
-        particle.alpha = 1.0;
-        particle.life = this.particleLife;
-        particle.maxLife = this.particleLife;
+        particle.alpha = this.alphaSpline.get(0);
+        particle.maxLife = this.particleMaxLife;
+        particle.life = 0;
         particle.rotation = Math.random() * 2.0 * Math.PI;
-        particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() * this.initialVelocity);
+        particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
 
-        this._particles.push(particle);
+        this.particles.push(particle);
     }
 
-    UpdateParticles(timeElapsed: number): void {
-        for (let p of this._particles) {
-            p.life -= timeElapsed;
-        }
+    updateParticles(timeElapsed: number): void {
+        const V_DAMP_FACTOR = 0.1;
+        const color = new Color();
+        this.particles.forEach((p: Particle) => {
+            p.life += timeElapsed;
 
-        this._particles = this._particles.filter(p => {
-            return p.life > 0.0;
+            const t = Math.min(p.life / p.maxLife, 1); // t range is 0 to 1
+
+            //p.rotation += timeElapsed * 0.5;
+            p.alpha = this.alphaSpline.get(t);
+            p.size = this.sizeSpline.get(t);
+            p.colour.copy(this.colorSpline.getResult(t, color));
+            p.position.add(p.velocity.clone().multiplyScalar((1 - t) * V_DAMP_FACTOR));
         });
 
-        for (const p of this._particles) {
-            const t = 1.0 - p.life / p.maxLife;
+        this.particles = this.particles.filter(p =>
+            p.life < p.maxLife
+        );
 
-            p.rotation += timeElapsed * 0.5;
-
-            // update properties from splines
-            p.alpha = this._alphaSpline.Get(t);
-            p.size = this._sizeSpline.Get(t);
-            p.colour.copy(this._colourSpline.Get(t));
-
-            p.position.add(p.velocity.clone().multiplyScalar(this._velocitySpline.Get(t) * timeElapsed));
-
-        }
-
-        // this._particles.sort((a, b) => {
+        // this.particles.sort((a, b) => {
         //     const d1 = this._camera.position.distanceTo(a.position);
         //     const d2 = this._camera.position.distanceTo(b.position);
 
