@@ -1,4 +1,4 @@
-import { Vector3, Color, ShaderMaterial, TextureLoader, Points, NormalBlending } from "three";
+import { Vector3, Color, ShaderMaterial, TextureLoader, Points, NormalBlending, Texture } from "three";
 import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
 import { Utility } from "../Utilitites/Utility";
@@ -115,8 +115,10 @@ export class SmokePuff extends ParticleSystemBase {
     }
 
     init() {
-        Utility.asyncResourceGetter(this.data.commonMaterials.textures, "smoke.png").then((texture) => {
+        new TextureLoader().loadAsync(`resources/smoke.png`).then((texture: Texture) => {
             this.material.uniforms.diffuseTexture.value = texture;
+        }).catch((err) => {
+            console.error(`${Utility.timestamp()} Could not get texture`);
         });
     }
 
@@ -152,7 +154,7 @@ export class SmokePuff extends ParticleSystemBase {
         this.particles = this.particles.filter(p =>
             p.life < p.maxLife
         );
-
+        console.log(`${Utility.timestamp()} ${this.particles.length}`);
         // this.particles.sort((a, b) => {
         //     const d1 = this._camera.position.distanceTo(a.position);
         //     const d2 = this._camera.position.distanceTo(b.position);

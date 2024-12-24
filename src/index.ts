@@ -9,39 +9,40 @@ import { Data } from './Data';
 
 class ParticleSystemDemo {
 
-  _threejs!: WebGLRenderer;
-  _camera!: PerspectiveCamera;
-  _scene: any;
+  renderer!: WebGLRenderer;
+  camera!: PerspectiveCamera;
+  scene: any;
   particleSystem!: ParticleSystemBase;
-  _previousRAF!: number | null;
+  previousRAF!: number | null;
+  timeLast = Date.now();
 
   constructor(public data: Data) {
-    this._Initialize();
+    this.init();
   }
 
-  _Initialize() {
-    this._threejs = new WebGLRenderer({
+  init() {
+    this.renderer = new WebGLRenderer({
       antialias: true,
     });
-    this._threejs.shadowMap.enabled = true;
-    this._threejs.shadowMap.type = PCFSoftShadowMap;
-    this._threejs.setPixelRatio(window.devicePixelRatio);
-    this._threejs.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    document.body.appendChild(this._threejs.domElement);
+    document.body.appendChild(this.renderer.domElement);
 
     window.addEventListener('resize', () => {
-      this._OnWindowResize();
+      this.windowResize();
     }, false);
 
     const fov = 60;
     const aspect = 1920 / 1080;
     const near = 1.0;
     const far = 1000.0;
-    this._camera = new PerspectiveCamera(fov, aspect, near, far);
-    this._camera.position.set(25, 10, 0);
+    this.camera = new PerspectiveCamera(fov, aspect, near, far);
+    this.camera.position.set(25, 10, 0);
 
-    this._scene = new Scene();
+    this.scene = new Scene();
 
     let light = new DirectionalLight(0xFFFFFF, 1.0);
     light.position.set(20, 100, 10);
@@ -58,54 +59,55 @@ class ParticleSystemDemo {
     light.shadow.camera.right = -100;
     light.shadow.camera.top = 100;
     light.shadow.camera.bottom = -100;
-    this._scene.add(light);
+    this.scene.add(light);
 
     const ambientlight = new AmbientLight(0x101010);
-    this._scene.add(ambientlight);
+    this.scene.add(ambientlight);
 
     const controls = new OrbitControls(
-      this._camera, this._threejs.domElement);
+      this.camera, this.renderer.domElement);
     controls.target.set(0, 0, 0);
     controls.update();
 
     document.addEventListener('mousemove', () => this.addParticles(), false);
 
     this.particleSystem = new SmokePuff({
-      parent: this._scene, maxEmitterLife: 300, frequency: this.data.tickSize
+      parent: this.scene, maxEmitterLife: 300, frequency: this.data.tickSize
     }, this.data);
+    (this.particleSystem as SmokePuff).init();
 
-    this._previousRAF = null;
-    this._RAF();
+    this.previousRAF = null;
+    this.animate();
   }
 
   addParticles() {
     this.particleSystem.addParticle();
   }
 
-  _OnWindowResize() {
-    this._camera.aspect = window.innerWidth / window.innerHeight;
-    this._camera.updateProjectionMatrix();
-    this._threejs.setSize(window.innerWidth, window.innerHeight);
+  windowResize() {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  _RAF() {
+  animate() {
     requestAnimationFrame((t) => {
-      if (this._previousRAF === null) {
-        this._previousRAF = t;
+      if (this.previousRAF === null) {
+        this.previousRAF = t;
       }
 
-      this._RAF();
+      this.animate();
 
-      this._threejs.render(this._scene, this._camera);
-      this._Step(t - this._previousRAF);
-      this._previousRAF = t;
+      this.renderer.render(this.scene, this.camera);
+      this.tick();
+      this.previousRAF = t;
     });
   }
 
-  _Step(timeElapsed: number) {
-    const timeElapsedS = timeElapsed * 0.001;
-
-    this.particleSystem.tick(timeElapsedS);
+  tick() {
+    const timeElapsed = Date.now() - this.timeLast;
+    this.particleSystem.tick(timeElapsed);
+    this.timeLast = Date.now();
   }
 }
 
