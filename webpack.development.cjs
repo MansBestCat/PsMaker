@@ -37,5 +37,5 @@ module.exports = {
             overlay: true
         }
     },
-    entry: './src/index.ts'
+    entry: './src/Main.ts'
 };
