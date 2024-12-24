@@ -40,7 +40,7 @@ class ParticleSystemDemo {
     const near = 1.0;
     const far = 1000.0;
     this.camera = new PerspectiveCamera(fov, aspect, near, far);
-    this.camera.position.set(25, 10, 0);
+    this.camera.position.set(5, 5, 5);
 
     this.scene = new Scene();
 
