@@ -1,6 +1,7 @@
 import { Vector3, Color, AdditiveBlending, ShaderMaterial, TextureLoader, Points } from "three";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
+import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
 
 
 
@@ -53,7 +54,6 @@ export class SparkFountain extends ParticleSystemBase {
         });
 
         this.points = new Points(this.geometry, this.material);
-        this.points.layers.set(Etype.TRANSIENT);
 
         params.parent.add(this.points);
 

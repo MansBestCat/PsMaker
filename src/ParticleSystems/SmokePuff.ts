@@ -75,7 +75,6 @@ export class SmokePuff extends ParticleSystemBase {
         });
 
         this.points = new Points(this.geometry, this.material);
-        this.points.layers.set(Etype.TRANSIENT);
 
         params.parent.add(this.points);
 
