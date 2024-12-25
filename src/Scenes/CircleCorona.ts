@@ -1,4 +1,4 @@
-import { AmbientLight, BoxGeometry, DirectionalLight, Mesh, Vector3 } from "three";
+import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
 import { Data } from "../Data";
 import { ParticleSystemBase } from "../ParticleSystems/ParticleSystemBase";
@@ -12,11 +12,12 @@ export class CircleCorona {
 
     timeLast = Date.now();
 
-    constructor(public data: Data) {
-        this.init();
-    }
 
-    init() {
+    go(data: Data, cameraManMain: CameraManMain) {
+
+        if (!data.camera) {
+            throw new Error(`${Utility.timestamp()} Expected camera`);
+        }
 
         let light = new DirectionalLight(0xFFFFFF, 1.0);
         light.position.set(20, 100, 10);
@@ -33,44 +34,28 @@ export class CircleCorona {
         light.shadow.camera.right = -100;
         light.shadow.camera.top = 100;
         light.shadow.camera.bottom = -100;
-        this.data.scene.add(light);
+        data.scene.add(light);
 
         const ambientlight = new AmbientLight(0x101010);
-        this.data.scene.add(ambientlight);
-
-        document.addEventListener('mousemove', () => {
-            this.particleSystem.addParticle()
-        });
-
-        this.particleSystem = new SmokePuff({
-            parent: this.data.scene, maxEmitterLife: 300, frequency: this.data.tickSize
-        }, this.data);
-        (this.particleSystem as SmokePuff).init();
-
-        this.animate();
-    }
-
-    go(data: Data, cameraManMain: CameraManMain) {
-
-        if (!data.camera) {
-            throw new Error(`${Utility.timestamp()} Expected camera`);
-        }
+        data.scene.add(ambientlight);
 
         const gui = new GUI();
 
-        // // cylinder outer
-        // const height = 3.0;
-        // const mesh = new Mesh(new CylinderGeometry(1, 1, height), undefined);
-        // mesh.position.y = 3;
-        // data.scene.add(mesh);
+        const ground = new Mesh(new BoxGeometry(10, 1, 10), new MeshBasicMaterial({ color: new Color(0xffffff) }));
+        data.scene.add(ground);
 
-        // // small box inner
-        // const mesh2 = new Mesh(new BoxGeometry(3, 1, 1), new MeshBasicMaterial({ color: new Color(0x00ff00) }));
-        // mesh2.position.y = 3;
-        // data.scene.add(mesh2);
+
+        // TODO: Place here any meshes that are needed
+
 
         data.camera.position.set(0, 7, -12);
         data.camera?.lookAt(0, 2, 0);
+
+
+        this.particleSystem = new SmokePuff({
+            parent: data.scene, maxEmitterLife: 300, frequency: data.tickSize
+        }, data);
+        (this.particleSystem as SmokePuff).init();
 
         // const shaderMat = new CylinderRingsMaterial().clone();
         // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");
@@ -84,6 +69,12 @@ export class CircleCorona {
         //gui.add(shaderMat.clock, "start").name("reset clock");
 
         cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
+
+        document.addEventListener('mousemove', () => {
+            this.particleSystem.addParticle()
+        });
+
+        this.animate();
     }
 
     animate() {
