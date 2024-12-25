@@ -28,7 +28,7 @@ void main() {
 }`;
 
 export class SparkFountain extends ParticleSystemBase {
-    particleMaxLife = 1000; // ms
+    maxParticleLife = 1000; // ms
     initialVelocity = 15;
 
     alphaSpline: LinearSpline;
@@ -81,7 +81,7 @@ export class SparkFountain extends ParticleSystemBase {
         particle.size = 1;
         particle.colour = new Color();
         particle.alpha = this.alphaSpline.get(0);
-        particle.maxLife = Math.random() * this.particleMaxLife;
+        particle.maxLife = Math.random() * this.maxParticleLife;
         particle.life = 0;
         particle.rotation = Math.random() * 2.0 * Math.PI;
         particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);

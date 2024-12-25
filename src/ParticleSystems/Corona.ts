@@ -39,7 +39,7 @@ void main() {
 }`;
 
 export class Corona extends ParticleSystemBase {
-    particleMaxLife = 400;
+    maxParticleLife = 400;
 
     alphaSpline: LinearSpline;
     colorSpline: LinearSplineOut;
@@ -125,7 +125,7 @@ export class Corona extends ParticleSystemBase {
         particle.position = new Vector3(0, 0, 0);
         particle.colour = new Color();
         particle.alpha = this.alphaSpline.get(0);
-        particle.maxLife = this.particleMaxLife;
+        particle.maxLife = this.maxParticleLife;
         particle.life = 0;
         particle.rotation = Math.random() * 2.0 * Math.PI;
         particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);

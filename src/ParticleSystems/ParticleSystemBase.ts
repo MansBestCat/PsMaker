@@ -22,9 +22,9 @@ export abstract class ParticleSystemBase {
     frequency: number;  //emit every frequency ms
     freqCounter: number;
     maxEmitterLife?: number;    // duration of the particle system    
-    particleMaxLife!: number;
+    maxParticleLife!: number;
 
-    life: number;       // range from 0 to maxLife
+    emitterLife: number;       // range from 0 to maxEmitterLife
     emitRateSpline?: LinearSpline;
 
     constructor(params: any) {
@@ -42,7 +42,7 @@ export abstract class ParticleSystemBase {
         if (params.maxEmitterLife) {
             this.maxEmitterLife = params.maxEmitterLife;
         }
-        this.life = 0;
+        this.emitterLife = 0;
         this.frequency = params.frequency;
         this.freqCounter = 0;
 
@@ -63,7 +63,7 @@ export abstract class ParticleSystemBase {
             return;
         }
 
-        if (this.maxEmitterLife && this.life > this.maxEmitterLife) {
+        if (this.maxEmitterLife && this.emitterLife > this.maxEmitterLife) {
             // emission time is over, ps is winding down
             return;
         }
@@ -72,7 +72,7 @@ export abstract class ParticleSystemBase {
         this.freqCounter = this.freqCounter - this.frequency;
 
         // Determine how many particles to add
-        const numParticles = (this.emitRateSpline && this.maxEmitterLife) ? Math.floor(this.emitRateSpline.get(this.life / this.maxEmitterLife)) : 1;
+        const numParticles = (this.emitRateSpline && this.maxEmitterLife) ? Math.floor(this.emitRateSpline.get(this.emitterLife / this.maxEmitterLife)) : 1;
         for (let i = 0; i < numParticles; i++) {
             this.addParticle();
         }
