@@ -106,9 +106,7 @@ export class SmokePuff extends ParticleSystemBase {
         this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this.emitRateSpline.addPoint(0.0, 10);
-        this.emitRateSpline.addPoint(0.1, 1);
-        this.emitRateSpline.addPoint(1.0, 0);
+        this.emitRateSpline.addPoint(0.0, 1.0);
 
         this.updateGeometry();
     }

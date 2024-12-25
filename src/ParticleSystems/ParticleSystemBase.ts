@@ -21,7 +21,7 @@ export abstract class ParticleSystemBase {
     points!: Points<BufferGeometry, Material>;
     frequency: number;  //emit every frequency ms
     freqCounter: number;
-    maxEmitterLife?: number;    // duration of the particle system    
+    maxEmitterLife?: number;    // duration of the particle system. If defined, must be gt 0
     maxParticleLife!: number;
 
     emitterLife: number;       // range from 0 to maxEmitterLife
@@ -40,6 +40,9 @@ export abstract class ParticleSystemBase {
         this.geometry.setAttribute('angle', new Float32BufferAttribute([], 1));
 
         if (params.maxEmitterLife) {
+            if (params.maxEmitterLife === 0) {
+                throw new Error(`${Utility.timestamp()} Can't be zero`);
+            }
             this.maxEmitterLife = params.maxEmitterLife;
         }
         this.emitterLife = 0;
@@ -72,11 +75,27 @@ export abstract class ParticleSystemBase {
         this.freqCounter = this.freqCounter - this.frequency;
 
         // Determine how many particles to add
-        const numParticles = (this.emitRateSpline && this.maxEmitterLife) ? Math.floor(this.emitRateSpline.get(this.emitterLife / this.maxEmitterLife)) : 1;
+        const numParticles = this.numParticles();
+        console.log(`${Utility.timestamp()} ${numParticles}`);
         for (let i = 0; i < numParticles; i++) {
             this.addParticle();
         }
         //console.log(`${Utility.timestamp()} in addParticlesGate, adding ${numParticles}`);
+    }
+
+    numParticles() {
+        if (!this.emitRateSpline) {
+            throw new Error(`${Utility.timestamp()} All ps now req emitProbabilitySpline to be defined`);
+        }
+
+        if (this.maxEmitterLife === undefined) {
+            // infinite
+            return this.emitRateSpline.get(0);
+
+        } else {
+            return this.emitRateSpline.get(this.emitterLife / this.maxEmitterLife);
+
+        }
     }
 
     updateGeometry() {
