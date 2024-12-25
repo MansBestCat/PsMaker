@@ -1,10 +1,10 @@
-import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, Vector3 } from "three";
+import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshPhongMaterial, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
 import { Data } from "../Data";
 import { ParticleSystemBase } from "../ParticleSystems/ParticleSystemBase";
-import { SmokePuff } from "../ParticleSystems/SmokePuff";
 import { Utility } from "../Utilitites/Utility";
 import GUI from "lil-gui";
+import { Corona } from "../ParticleSystems/Corona";
 
 export class CircleCorona {
 
@@ -41,7 +41,8 @@ export class CircleCorona {
 
         const gui = new GUI();
 
-        const ground = new Mesh(new BoxGeometry(10, 1, 10), new MeshBasicMaterial({ color: new Color(0xffffff) }));
+        const ground = new Mesh(new BoxGeometry(10, 1, 10), new MeshPhongMaterial({ color: new Color(0x333333) }));
+        ground.position.y = -2;
         data.scene.add(ground);
 
 
@@ -52,10 +53,10 @@ export class CircleCorona {
         data.camera?.lookAt(0, 2, 0);
 
 
-        this.particleSystem = new SmokePuff({
+        this.particleSystem = new Corona({
             parent: data.scene, maxEmitterLife: 300, frequency: data.tickSize
         }, data);
-        (this.particleSystem as SmokePuff).init();
+        (this.particleSystem as Corona).init();
 
         // const shaderMat = new CylinderRingsMaterial().clone();
         // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");
