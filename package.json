@@ -5,6 +5,7 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
+    "lil-gui": "^0.20.0",
     "three": "^0.158.0"
   },
   "devDependencies": {
@@ -21,6 +22,5 @@
   "scripts": {
     "webpackDev": "webpack serve --config webpack.development.cjs"
   },
-  "author": "mansbestcat",
-  "license": "ISC"
+  "author": "mansbestcat"
 }
