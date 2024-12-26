@@ -4,7 +4,11 @@ import { Utility } from "../Utilitites/Utility";
 export class CurveEditor {
 
     SVGNS = "http://www.w3.org/2000/svg";
+    POINT_RADIUS = 10;
+    WIDTH = 150;
+    HEIGHT = 75;
 
+    points = new Array<HTMLElement>();
     currentPoint?: HTMLElement;
 
     makeCurveEditor(gui: GUI, points: any) {
@@ -13,8 +17,9 @@ export class CurveEditor {
         const div = document.createElement("div");
 
         const svg = document.createElementNS(this.SVGNS, "svg") as HTMLElement;
-        svg.setAttribute("width", "100%");
-        svg.setAttribute("height", "100%");
+        svg.setAttribute("width", this.WIDTH + "px");
+        svg.setAttribute("height", this.HEIGHT + "px");
+        svg.style.border = "2px solid red";
 
         svg.onpointermove = (event: PointerEvent) => {
             event.stopPropagation();
@@ -31,25 +36,17 @@ export class CurveEditor {
             this.currentPoint = undefined;
         }
 
-        const arrow = document.createElementNS(this.SVGNS, "path");
-        arrow.setAttribute("d", "M 30 0 L 140 0 L 140 7 L 85 20 L 30 7 Z");
-        arrow.setAttribute("fill", "#FFFFFF");
-        svg.appendChild(arrow);
+        // Make and push the end points
+        const topLeft = this.makePoint(10, 10);
+        const topRight = this.makePoint(100, 10);
+        this.points.push(topLeft, topRight);
 
-        const topLeft = document.createElementNS(this.SVGNS, "circle") as HTMLElement;
-        topLeft.setAttribute("cx", "10");
-        topLeft.setAttribute("cy", "10");
-        topLeft.setAttribute("r", "10");
-        topLeft.onpointerdown = (event: PointerEvent) => {
-            event.stopPropagation();
-            const element = event.target as HTMLElement;
-            // element.dataset.startX = event.clientX.toString();
-            // element.dataset.startY = event.clientY.toString();
-            // element.dataset.initX = element.parentElement!.style.left || "0";
-            // element.dataset.initY = element.parentElement!.style.top || "0";
-            this.currentPoint = element;
-        }
-        svg.appendChild(topLeft);
+        // Iterate the points to draw a shape connecting them
+        this.connectPoints();
+
+        svg.append(topLeft, topRight);
+
+
 
         div.append(svg);
 
@@ -61,6 +58,28 @@ export class CurveEditor {
         curveEditor.onFinishChange(() => {
             console.log(`${Utility.timestamp()} onFinChange`);
         });
+
+    }
+
+    makePoint(cx: number, cy: number): HTMLElement {
+        const point = document.createElementNS(this.SVGNS, "circle") as HTMLElement;
+        point.setAttribute("cx", cx.toString());
+        point.setAttribute("cy", cy.toString());
+        point.setAttribute("r", this.POINT_RADIUS.toString());
+        point.onpointerdown = (event: PointerEvent) => {
+            event.stopPropagation();
+            const element = event.target as HTMLElement;
+            this.currentPoint = element;
+        }
+        return point;
+    }
+
+
+    connectPoints() {
+        // const arrow = document.createElementNS(this.SVGNS, "path");
+        // arrow.setAttribute("d", "M 30 0 L 140 0 L 140 7 L 85 20 L 30 7 Z");
+        // arrow.setAttribute("fill", "#FFFFFF");
+        // svg.appendChild(arrow);
 
     }
 }
