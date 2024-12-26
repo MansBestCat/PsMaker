@@ -41,6 +41,27 @@ export class CircleCorona {
 
         const gui = new GUI();
 
+        // Mock the points from the LinearSpline structure
+        const points = {
+            stub: () => {
+                // For our custom Controller, we need to choose a type lil-gui recognizes.
+                // The choice of "function" / button type is totally arbitrary.
+                // The widget will be hidden in favor of the ui we build for curve editing.
+                console.log(`${Utility.timestamp()} The button stub function fired.`);
+            }
+        };
+        const curveEditor = gui.add(points, "stub");
+        const button = document.createElement("button");
+        button.innerHTML = "click me";
+        button.onclick = () => { console.log(`${Utility.timestamp()} buttn clicked`); }
+        curveEditor.domElement.append(button);
+        curveEditor.onChange(() => {
+            console.log(`${Utility.timestamp()} onChange`);
+        });
+        curveEditor.onFinishChange(() => {
+            console.log(`${Utility.timestamp()} onFinChange`);
+        });
+
         const ground = new Mesh(new BoxGeometry(10, 1, 10), new MeshPhongMaterial({ color: new Color(0x333333) }));
         ground.position.y = -2;
         data.scene.add(ground);
