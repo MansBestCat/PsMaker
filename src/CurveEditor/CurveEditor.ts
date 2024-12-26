@@ -1,5 +1,6 @@
 import GUI from "lil-gui";
 import { Utility } from "../Utilitites/Utility";
+import { Vector2 } from "three";
 
 export class CurveEditor {
 
@@ -10,6 +11,7 @@ export class CurveEditor {
 
     points = new Array<HTMLElement>();
     currentPoint?: HTMLElement;
+    fillArea?: HTMLElement;
 
     makeCurveEditor(gui: GUI, points: any) {
 
@@ -29,6 +31,7 @@ export class CurveEditor {
             const element = event.target as HTMLElement;
             element.setAttribute("cx", event.offsetX.toString());
             element.setAttribute("cy", event.offsetY.toString());
+            this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
         }
 
         svg.onpointerup = (event: PointerEvent) => {
@@ -42,16 +45,19 @@ export class CurveEditor {
         this.points.push(topLeft, topRight);
 
         // Iterate the points to draw a shape connecting them
-        this.connectPoints();
+        this.fillArea = this.connectPoints();
+        svg.append(this.fillArea);
 
+        // Points last so they'll be on top
         svg.append(topLeft, topRight);
-
-
 
         div.append(svg);
 
+        // Call lil-gui to make it and append our built-up div
         const curveEditor = gui.add(points, "stub");
         curveEditor.domElement.append(div);
+
+        // Wire up events as necessary
         curveEditor.onChange(() => {
             console.log(`${Utility.timestamp()} onChange`);
         });
@@ -74,12 +80,28 @@ export class CurveEditor {
         return point;
     }
 
+    connectPoints(): HTMLElement {
+        const fillArea = document.createElementNS(this.SVGNS, "path") as HTMLElement;
+        fillArea.setAttribute("fill", "#FFFFFF");
+        fillArea.setAttribute("d", `${this.buildPathString()}`);
+        return fillArea;
+    }
 
-    connectPoints() {
-        // const arrow = document.createElementNS(this.SVGNS, "path");
-        // arrow.setAttribute("d", "M 30 0 L 140 0 L 140 7 L 85 20 L 30 7 Z");
-        // arrow.setAttribute("fill", "#FFFFFF");
-        // svg.appendChild(arrow);
+    buildPathString(): string {
+        // Draw clockwise from top left.
+        // Start by drawing the points left to right, then down the right side, and the bottom, then up the left        
+        let pathString = "M ";
+        for (let i = 0; i < this.points.length; i++) {
+            pathString += `${this.pointPathString(i)} L `;
+        }
+        const bottomRight = { left: this.WIDTH - this.POINT_RADIUS, top: this.HEIGHT - this.POINT_RADIUS };
+        const bottomLeft = { left: this.POINT_RADIUS, top: this.HEIGHT - this.POINT_RADIUS };
+        pathString += `${bottomRight.left} ${bottomRight.top} L`;
+        pathString += `${bottomLeft.left} ${bottomLeft.top} Z`;
+        return pathString;
+    }
 
+    pointPathString(index: number) {
+        return `${this.points[index].getAttribute("cx")} ${this.points[index].getAttribute("cy")}`;
     }
 }
