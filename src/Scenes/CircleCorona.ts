@@ -54,7 +54,7 @@ export class CircleCorona {
 
 
         this.particleSystem = new Corona({
-            parent: data.scene, maxEmitterLife: 300, frequency: data.tickSize
+            parent: data.scene, maxEmitterLife: undefined, frequency: data.tickSize
         }, data);
         (this.particleSystem as Corona).init();
 
