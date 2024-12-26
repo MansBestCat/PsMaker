@@ -7,6 +7,7 @@ import GUI from "lil-gui";
 import { Corona } from "../ParticleSystems/Corona";
 
 export class CircleCorona {
+    SVGNS = "http://www.w3.org/2000/svg";
 
     particleSystem!: ParticleSystemBase;
 
@@ -50,11 +51,22 @@ export class CircleCorona {
                 console.log(`${Utility.timestamp()} The button stub function fired.`);
             }
         };
+
+        // Build up the CurveController ui elements and events
+        const div = document.createElement("div");
+
+        const svg = document.createElementNS(this.SVGNS, "svg");
+        svg.setAttribute("width", "100%");
+        svg.setAttribute("height", "100%");
+
+        const arrow = document.createElementNS(this.SVGNS, "path");
+        arrow.setAttribute("d", "M 30 0 L 140 0 L 140 7 L 85 20 L 30 7 Z");
+        arrow.setAttribute("fill", "#FFFFFF");
+        svg.appendChild(arrow);
+        div.append(svg);
+
         const curveEditor = gui.add(points, "stub");
-        const button = document.createElement("button");
-        button.innerHTML = "click me";
-        button.onclick = () => { console.log(`${Utility.timestamp()} buttn clicked`); }
-        curveEditor.domElement.append(button);
+        curveEditor.domElement.append(div);
         curveEditor.onChange(() => {
             console.log(`${Utility.timestamp()} onChange`);
         });
