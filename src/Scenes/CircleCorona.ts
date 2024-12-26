@@ -63,6 +63,13 @@ export class CircleCorona {
         arrow.setAttribute("d", "M 30 0 L 140 0 L 140 7 L 85 20 L 30 7 Z");
         arrow.setAttribute("fill", "#FFFFFF");
         svg.appendChild(arrow);
+
+        const topLeft = document.createElementNS(this.SVGNS, "circle");
+        topLeft.setAttribute("cx", "10");
+        topLeft.setAttribute("cy", "10");
+        topLeft.setAttribute("r", "10");
+        svg.appendChild(topLeft);
+
         div.append(svg);
 
         const curveEditor = gui.add(points, "stub");
