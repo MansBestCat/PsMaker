@@ -76,7 +76,6 @@ export abstract class ParticleSystemBase {
 
         // Determine how many particles to add
         const numParticles = this.numParticles();
-        console.log(`${Utility.timestamp()} ${numParticles}`);
         for (let i = 0; i < numParticles; i++) {
             this.addParticle();
         }
@@ -85,7 +84,7 @@ export abstract class ParticleSystemBase {
 
     numParticles() {
         if (!this.emitRateSpline) {
-            throw new Error(`${Utility.timestamp()} All ps now req emitProbabilitySpline to be defined`);
+            throw new Error(`${Utility.timestamp()} All ps that inherit from ParticleSystemBase as of 24 DEC 2024 req emitRateSpline to be defined`);
         }
 
         if (this.maxEmitterLife === undefined) {
