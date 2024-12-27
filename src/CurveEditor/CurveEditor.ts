@@ -1,6 +1,5 @@
 import GUI from "lil-gui";
 import { Utility } from "../Utilitites/Utility";
-import { Vector2 } from "three";
 
 type PointId = string;
 
@@ -34,6 +33,27 @@ export class CurveEditor {
         svg.setAttribute("width", this.WIDTH + "px");
         svg.setAttribute("height", this.HEIGHT + "px");
         svg.style.border = "2px solid red";
+
+        svg.onpointerdown = (event: PointerEvent) => {
+            event.stopPropagation();
+            if (this.currentPoint) {
+                throw new Error(`${Utility.timestamp()} Unexpected condition. currentPoint is set??`);
+            }
+
+            // Add a new point
+            const point = this.makePoint(event.offsetX, event.offsetY, false);
+            for (let i = 1; i < this.points.length; i++) {
+                const cx = parseFloat(this.points[i].element.getAttribute("cx")!);
+                if (cx > event.offsetX) {
+                    // Insert the point at the index i
+                    this.points.splice(i, 0, point);
+                    break;
+                }
+            }
+            this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
+            svg.append(point.element);
+            this.currentPoint = point;
+        }
 
         svg.onpointermove = (event: PointerEvent) => {
             event.stopPropagation();
