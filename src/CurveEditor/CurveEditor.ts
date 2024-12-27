@@ -2,6 +2,14 @@ import GUI from "lil-gui";
 import { Utility } from "../Utilitites/Utility";
 import { Vector2 } from "three";
 
+class Point {
+    constructor(
+        public element: HTMLElement,
+        public lockX: boolean   // Whether the x axis movement for the points is prevented.
+        // Will be set to true for points 0 and n-1
+    ) { }
+}
+
 export class CurveEditor {
 
     SVGNS = "http://www.w3.org/2000/svg";
@@ -9,7 +17,7 @@ export class CurveEditor {
     WIDTH = 150;
     HEIGHT = 75;
 
-    points = new Array<HTMLElement>();
+    points = new Array<Point>();
     currentPoint?: HTMLElement;
     fillArea?: HTMLElement;
 
@@ -40,16 +48,16 @@ export class CurveEditor {
         }
 
         // Make and push the end points
-        const topLeft = this.makePoint(10, 10);
-        const topRight = this.makePoint(100, 10);
-        this.points.push(topLeft, topRight);
+        const pointLeft = new Point(this.makePointElement(10, 10), true);
+        const pointRight = new Point(this.makePointElement(100, 10), true);
+        this.points.push(pointLeft, pointRight);
 
         // Iterate the points to draw a shape connecting them
         this.fillArea = this.connectPoints();
         svg.append(this.fillArea);
 
         // Points last so they'll be on top
-        svg.append(topLeft, topRight);
+        svg.append(pointLeft.element, pointRight.element);
 
         div.append(svg);
 
@@ -67,7 +75,7 @@ export class CurveEditor {
 
     }
 
-    makePoint(cx: number, cy: number): HTMLElement {
+    makePointElement(cx: number, cy: number): HTMLElement {
         const point = document.createElementNS(this.SVGNS, "circle") as HTMLElement;
         point.setAttribute("cx", cx.toString());
         point.setAttribute("cy", cy.toString());
@@ -102,6 +110,6 @@ export class CurveEditor {
     }
 
     pointPathString(index: number) {
-        return `${this.points[index].getAttribute("cx")} ${this.points[index].getAttribute("cy")}`;
+        return `${this.points[index].element.getAttribute("cx")} ${this.points[index].element.getAttribute("cy")}`;
     }
 }
