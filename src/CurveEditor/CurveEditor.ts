@@ -124,6 +124,8 @@ export class CurveEditor {
         point.setAttribute("cx", cx.toString());
         point.setAttribute("cy", cy.toString());
         point.setAttribute("r", this.POINT_RADIUS.toString());
+        point.setAttribute("stroke", "white");
+        point.setAttribute("stroke-width", "2");
 
         point.onpointerdown = (event: PointerEvent) => {
             event.stopPropagation();
@@ -135,7 +137,7 @@ export class CurveEditor {
 
     connectPoints(): HTMLElement {
         const fillArea = document.createElementNS(this.SVGNS, "path") as HTMLElement;
-        fillArea.setAttribute("fill", "#FFFFFF");
+        fillArea.setAttribute("fill", "white");
         fillArea.setAttribute("d", `${this.buildPathString()}`);
         return fillArea;
     }
