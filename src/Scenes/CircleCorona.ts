@@ -41,8 +41,6 @@ export class CircleCorona {
         const ambientlight = new AmbientLight(0x101010);
         data.scene.add(ambientlight);
 
-        const gui = new GUI();
-
         // Mock the points from the LinearSpline structure
         const points = {
             stub: () => {
@@ -53,16 +51,12 @@ export class CircleCorona {
             }
         };
 
-        const curveTest = new CurveEditor();
-        curveTest.makeCurveEditor(gui, points);
-
         const ground = new Mesh(new BoxGeometry(10, 1, 10), new MeshPhongMaterial({ color: new Color(0x333333) }));
         ground.position.y = -2;
         data.scene.add(ground);
 
 
         // TODO: Place here any meshes that are needed
-
 
         data.camera.position.set(0, 7, -12);
         data.camera?.lookAt(0, 2, 0);
@@ -72,6 +66,13 @@ export class CircleCorona {
             parent: data.scene, maxEmitterLife: undefined, frequency: data.tickSize
         }, data);
         (this.particleSystem as Corona).init();
+
+        // Gui needs to be defined after the ps is instantiated
+        // Because curve editors need to have access to the linear splines inside the ps object
+        const gui = new GUI();
+        const curveTest = new CurveEditor();
+        curveTest.makeCurveEditor(gui, points);
+
 
         // const shaderMat = new CylinderRingsMaterial().clone();
         // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");
