@@ -15,7 +15,7 @@ class Point {
 export class CurveEditor {
 
     SVGNS = "http://www.w3.org/2000/svg";
-    POINT_RADIUS = 10;
+    POINT_RADIUS = 8;
     WIDTH = 150;
     HEIGHT = 75;
 
@@ -55,7 +55,9 @@ export class CurveEditor {
             if (!this.currentPoint.lockX) {
                 this.currentPoint.element.setAttribute("cx", event.offsetX.toString());
             }
-            this.currentPoint.element.setAttribute("cy", event.offsetY.toString());
+            if (event.offsetY > this.POINT_RADIUS && event.offsetY < this.HEIGHT - this.POINT_RADIUS) {
+                this.currentPoint.element.setAttribute("cy", event.offsetY.toString());
+            }
             this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
         }
 
@@ -65,8 +67,8 @@ export class CurveEditor {
         }
 
         // Make the end points
-        const pointLeft = this.makePoint(10, 10, true);
-        const pointRight = this.makePoint(100, 10, true);
+        const pointLeft = this.makePoint(this.POINT_RADIUS, this.POINT_RADIUS, true);
+        const pointRight = this.makePoint(this.WIDTH - this.POINT_RADIUS, this.POINT_RADIUS, true);
         this.points.push(pointLeft, pointRight);
 
         // Iterate the points to draw a shape connecting them
