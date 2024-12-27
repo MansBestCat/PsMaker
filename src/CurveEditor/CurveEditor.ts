@@ -2,8 +2,11 @@ import GUI from "lil-gui";
 import { Utility } from "../Utilitites/Utility";
 import { Vector2 } from "three";
 
+type PointId = string;
+
 class Point {
     constructor(
+        public pointId: PointId,
         public element: HTMLElement,
         public lockX: boolean   // Whether the x axis movement for the points is prevented.
         // Will be set to true for points 0 and n-1
@@ -17,8 +20,9 @@ export class CurveEditor {
     WIDTH = 150;
     HEIGHT = 75;
 
-    points = new Array<Point>();
-    currentPoint?: HTMLElement;
+    points = new Array<Point>();            // Ordered, for output to the points of the LinearSpline
+    pointsMap = new Map<PointId, Point>();  // Map,     for access from pointer events
+    currentPoint?: Point;
     fillArea?: HTMLElement;
 
     makeCurveEditor(gui: GUI, points: any) {
@@ -47,9 +51,13 @@ export class CurveEditor {
             this.currentPoint = undefined;
         }
 
-        // Make and push the end points
-        const pointLeft = new Point(this.makePointElement(10, 10), true);
-        const pointRight = new Point(this.makePointElement(100, 10), true);
+        // Make the end points and add them to our data structures
+        const pointIdLeft = Utility.generateUid(8);
+        const pointLeft = new Point(pointIdLeft, this.makePointElement(pointIdLeft, 10, 10), true);
+        const pointIdRight = Utility.generateUid(8);
+        const pointRight = new Point(pointIdRight, this.makePointElement(pointIdRight, 100, 10), true);
+        this.pointsMap.set(pointLeft.pointId, pointLeft);
+        this.pointsMap.set(pointRight.pointId, pointRight);
         this.points.push(pointLeft, pointRight);
 
         // Iterate the points to draw a shape connecting them
@@ -75,15 +83,17 @@ export class CurveEditor {
 
     }
 
-    makePointElement(cx: number, cy: number): HTMLElement {
+    makePointElement(pointId: PointId, cx: number, cy: number): HTMLElement {
         const point = document.createElementNS(this.SVGNS, "circle") as HTMLElement;
+        point.dataset.pointId = pointId;
         point.setAttribute("cx", cx.toString());
         point.setAttribute("cy", cy.toString());
         point.setAttribute("r", this.POINT_RADIUS.toString());
+
         point.onpointerdown = (event: PointerEvent) => {
             event.stopPropagation();
             const element = event.target as HTMLElement;
-            this.currentPoint = element;
+            this.currentPoint = this.pointsMap.get(element.dataset.pointId!);
         }
         return point;
     }
