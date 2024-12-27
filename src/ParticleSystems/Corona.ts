@@ -151,7 +151,7 @@ export class Corona extends ParticleSystemBase {
         this.particles = this.particles.filter(p =>
             p.life < p.maxLife
         );
-        console.log(`${Utility.timestamp()} ${this.particles.length}`);
+        //console.log(`${Utility.timestamp()} ${this.particles.length}`);
         // this.particles.sort((a, b) => {
         //     const d1 = this._camera.position.distanceTo(a.position);
         //     const d2 = this._camera.position.distanceTo(b.position);
