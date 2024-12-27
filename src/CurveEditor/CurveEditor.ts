@@ -7,7 +7,7 @@ class Point {
     constructor(
         public pointId: PointId,
         public element: HTMLElement,
-        public lockX: boolean   // Whether the x axis movement for the points is prevented.
+        public lockX: boolean   // Whether the x axis movement for the point is prevented.
         // Will be set to true for points 0 and n-1
     ) { }
 }
