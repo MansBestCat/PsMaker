@@ -40,9 +40,8 @@ export class CurveEditor {
             if (!this.currentPoint) {
                 return;
             }
-            const element = event.target as HTMLElement;
-            element.setAttribute("cx", event.offsetX.toString());
-            element.setAttribute("cy", event.offsetY.toString());
+            this.currentPoint.element.setAttribute("cx", event.offsetX.toString());
+            this.currentPoint.element.setAttribute("cy", event.offsetY.toString());
             this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
         }
 
