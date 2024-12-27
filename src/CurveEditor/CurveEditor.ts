@@ -40,18 +40,10 @@ export class CurveEditor {
                 throw new Error(`${Utility.timestamp()} Unexpected condition. currentPoint is set??`);
             }
 
-            // Add a new point
-            const point = this.makePoint(event.offsetX, event.offsetY, false);
-            for (let i = 1; i < this.points.length; i++) {
-                const cx = parseFloat(this.points[i].element.getAttribute("cx")!);
-                if (cx > event.offsetX) {
-                    // Insert the point at the index i
-                    this.points.splice(i, 0, point);
-                    break;
-                }
-            }
+            const point = this.insertPoint(event);
             this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
             svg.append(point.element);
+
             this.currentPoint = point;
         }
 
@@ -98,6 +90,20 @@ export class CurveEditor {
             console.log(`${Utility.timestamp()} onFinChange`);
         });
 
+    }
+
+    insertPoint(event: PointerEvent): Point {
+        // Add a new point
+        const point = this.makePoint(event.offsetX, event.offsetY, false);
+        for (let i = 1; i < this.points.length; i++) {
+            const cx = parseFloat(this.points[i].element.getAttribute("cx")!);
+            if (cx > event.offsetX) {
+                // Insert the point at the index i
+                this.points.splice(i, 0, point);
+                break;
+            }
+        }
+        return point;
     }
 
     /**
