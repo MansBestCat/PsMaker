@@ -52,16 +52,10 @@ export class CurveEditor {
             this.currentPoint = undefined;
         }
 
-        // Make the end points and add them to our data structures
-        const pointIdLeft = Utility.generateUid(8);
-        const pointLeft = new Point(pointIdLeft, this.makePointElement(pointIdLeft, 10, 10), true);
-        this.pointsMap.set(pointLeft.pointId, pointLeft);
-        this.points.push(pointLeft);
-
-        const pointIdRight = Utility.generateUid(8);
-        const pointRight = new Point(pointIdRight, this.makePointElement(pointIdRight, 100, 10), true);
-        this.pointsMap.set(pointRight.pointId, pointRight);
-        this.points.push(pointRight);
+        // Make the end points
+        const pointLeft = this.makePoint(10, 10, true);
+        const pointRight = this.makePoint(100, 10, true);
+        this.points.push(pointLeft, pointRight);
 
         // Iterate the points to draw a shape connecting them
         this.fillArea = this.connectPoints();
@@ -84,6 +78,16 @@ export class CurveEditor {
             console.log(`${Utility.timestamp()} onFinChange`);
         });
 
+    }
+
+    /**
+     * Make a point, add it to the map, and return it.
+     */
+    makePoint(cx: number, cy: number, lockX: boolean): Point {
+        const pointId = Utility.generateUid(8);
+        const point = new Point(pointId, this.makePointElement(pointId, cx, cy), lockX);
+        this.pointsMap.set(point.pointId, point);
+        return point;
     }
 
     makePointElement(pointId: PointId, cx: number, cy: number): HTMLElement {
