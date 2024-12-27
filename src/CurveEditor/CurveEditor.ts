@@ -55,11 +55,13 @@ export class CurveEditor {
         // Make the end points and add them to our data structures
         const pointIdLeft = Utility.generateUid(8);
         const pointLeft = new Point(pointIdLeft, this.makePointElement(pointIdLeft, 10, 10), true);
+        this.pointsMap.set(pointLeft.pointId, pointLeft);
+        this.points.push(pointLeft);
+
         const pointIdRight = Utility.generateUid(8);
         const pointRight = new Point(pointIdRight, this.makePointElement(pointIdRight, 100, 10), true);
-        this.pointsMap.set(pointLeft.pointId, pointLeft);
         this.pointsMap.set(pointRight.pointId, pointRight);
-        this.points.push(pointLeft, pointRight);
+        this.points.push(pointRight);
 
         // Iterate the points to draw a shape connecting them
         this.fillArea = this.connectPoints();
