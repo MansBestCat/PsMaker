@@ -52,32 +52,7 @@ export class CurveEditor {
             if (!this.currentPoint) {
                 return;
             }
-
-            const point = this.pointsMap.get(this.currentPoint.element.dataset.pointId!)!;
-            const index = this.points.indexOf(point);
-            let xBetweenPoints = true;
-            if (index > 0) {
-                // check to the left
-                const pointToTheLeft = this.points[index - 1];
-                if (event.offsetX < parseFloat(pointToTheLeft.element.getAttribute("cx")!) + 2 * this.POINT_RADIUS) {
-                    xBetweenPoints = false;
-                }
-            }
-            if (index < this.points.length - 1) {
-                // check to the right
-                const pointToTheRight = this.points[index + 1];
-                if (event.offsetX > parseFloat(pointToTheRight.element.getAttribute("cx")!) - 2 * this.POINT_RADIUS) {
-                    xBetweenPoints = false;
-                }
-            }
-
-            if (!this.currentPoint.lockX && xBetweenPoints) {
-                this.currentPoint.element.setAttribute("cx", event.offsetX.toString());
-            }
-            if (event.offsetY > this.POINT_RADIUS && event.offsetY < this.HEIGHT - this.POINT_RADIUS) {
-                this.currentPoint.element.setAttribute("cy", event.offsetY.toString());
-            }
-            this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
+            this.pointerMove(event);
         }
 
         svg.onpointerup = (event: PointerEvent) => {
@@ -111,6 +86,35 @@ export class CurveEditor {
             console.log(`${Utility.timestamp()} onFinChange`);
         });
 
+    }
+
+    pointerMove(event: PointerEvent) {
+
+        const point = this.pointsMap.get(this.currentPoint!.element.dataset.pointId!)!;
+        const index = this.points.indexOf(point);
+        let xBetweenPoints = true;
+        if (index > 0) {
+            // check to the left
+            const pointToTheLeft = this.points[index - 1];
+            if (event.offsetX < parseFloat(pointToTheLeft.element.getAttribute("cx")!) + 2 * this.POINT_RADIUS) {
+                xBetweenPoints = false;
+            }
+        }
+        if (index < this.points.length - 1) {
+            // check to the right
+            const pointToTheRight = this.points[index + 1];
+            if (event.offsetX > parseFloat(pointToTheRight.element.getAttribute("cx")!) - 2 * this.POINT_RADIUS) {
+                xBetweenPoints = false;
+            }
+        }
+
+        if (!this.currentPoint!.lockX && xBetweenPoints) {
+            this.currentPoint!.element.setAttribute("cx", event.offsetX.toString());
+        }
+        if (event.offsetY > this.POINT_RADIUS && event.offsetY < this.HEIGHT - this.POINT_RADIUS) {
+            this.currentPoint!.element.setAttribute("cy", event.offsetY.toString());
+        }
+        this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
     }
 
     insertPoint(event: PointerEvent): Point {
