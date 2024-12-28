@@ -19,6 +19,11 @@ export class CurveEditor {
     POINT_RADIUS = 8;
     WIDTH = 150;
     HEIGHT = 75;
+    AVAILABLE_WIDTH = this.WIDTH - 2 * this.POINT_RADIUS;
+    AVAILABLE_HEIGHT = this.HEIGHT - 2 * this.POINT_RADIUS;
+    TOP = this.POINT_RADIUS;
+    LEFT = this.POINT_RADIUS;
+    MAX_VALUE = 10; // FIXME: until we have scalar or some other way to fit the range
 
     points = new Array<Point>();            // Ordered, for output to the points of the LinearSpline
     pointsMap = new Map<PointId, Point>();  // Map,     for access from pointer events
@@ -96,33 +101,23 @@ export class CurveEditor {
 
     splineToDom(linearSpline: LinearSpline): Array<{ cx: number, cy: number }> {
         const domValues = new Array();
-        const width = this.WIDTH - 2 * this.POINT_RADIUS;
-        const height = this.HEIGHT - 2 * this.POINT_RADIUS;
-        const top = this.POINT_RADIUS;
-        const left = this.POINT_RADIUS;
-        const maxValue = 10; // FIXME: until we have scalar or some other way to fit the range
         for (let i = 0; i < linearSpline._points.length; i++) {
             const t = linearSpline._points[i][0];
             const value = linearSpline._points[i][1];
-            const cx = left + t * width;
-            const cy = top + height / maxValue * (maxValue - value);
+            const cx = this.LEFT + t * this.AVAILABLE_WIDTH;
+            const cy = this.TOP + this.AVAILABLE_HEIGHT / this.MAX_VALUE * (this.MAX_VALUE - value);
             domValues.push({ cx, cy });
         }
         return domValues;
     }
 
     xDomToSpline(cx: number): number {
-        const width = this.WIDTH - 2 * this.POINT_RADIUS;
-        const left = this.POINT_RADIUS;
-        const t = (cx - left) / width;
+        const t = (cx - this.LEFT) / this.AVAILABLE_WIDTH;
         return t;
     }
 
     yDomToSpline(cy: number): number {
-        const height = this.HEIGHT - 2 * this.POINT_RADIUS;
-        const top = this.POINT_RADIUS;
-        const maxValue = 10; // FIXME: until we have scalar or some other way to fit the range
-        const value = -((cy - top) * (maxValue / height) - maxValue);
+        const value = -((cy - this.TOP) * (this.MAX_VALUE / this.AVAILABLE_HEIGHT) - this.MAX_VALUE);
         return value;
     }
 
