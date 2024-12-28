@@ -65,6 +65,10 @@ export class CircleCorona {
         ceEmitRate.makeCurveEditor(gui, psCorona.emitRateSpline!, "Emission rate");
         const ceAlpha = new CurveEditor();
         ceAlpha.makeCurveEditor(gui, psCorona.alphaSpline, "Alpha");
+        const ceSize = new CurveEditor();
+        ceSize.makeCurveEditor(gui, psCorona.sizeSpline, "Size");
+        const ceVelocity = new CurveEditor();
+        ceVelocity.makeCurveEditor(gui, psCorona.velocitySpline, "Velocity");
 
         // const shaderMat = new CylinderRingsMaterial().clone();
         // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");
