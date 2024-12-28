@@ -58,7 +58,7 @@ export class CurveEditor {
             if (!this.currentPoint) {
                 return;
             }
-            this.pointerMove(event);
+            this.pointerMove(event, linearSpline);
         }
 
         svg.onpointerup = (event: PointerEvent) => {
@@ -121,8 +121,7 @@ export class CurveEditor {
         return value;
     }
 
-    pointerMove(event: PointerEvent) {
-
+    pointerMove(event: PointerEvent, linearSpline: LinearSpline) {
         const point = this.pointsMap.get(this.currentPoint!.element.dataset.pointId!)!;
         const index = this.points.indexOf(point);
         let xBetweenPoints = true;
@@ -144,12 +143,14 @@ export class CurveEditor {
         if (!this.currentPoint!.lockX && xBetweenPoints) {
             this.currentPoint!.element.setAttribute("cx", event.offsetX.toString());
             const t = this.xDomToSpline(event.offsetX);
-            console.log(`${Utility.timestamp()} set t to ${t}`);
+            linearSpline._points[index][0] = t;
+            //console.log(`${Utility.timestamp()} set t to ${t}`);
         }
         if (event.offsetY > this.POINT_RADIUS && event.offsetY < this.HEIGHT - this.POINT_RADIUS) {
             this.currentPoint!.element.setAttribute("cy", event.offsetY.toString());
             const value = this.yDomToSpline(event.offsetY);
-            console.log(`${Utility.timestamp()} set value to ${value}`);
+            linearSpline._points[index][1] = value;
+            //console.log(`${Utility.timestamp()} set value to ${value}`);
         }
         this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
     }
