@@ -71,7 +71,7 @@ export class CircleCorona {
         // Because curve editors need to have access to the linear splines inside the ps object
         const gui = new GUI();
         const curveTest = new CurveEditor();
-        curveTest.makeCurveEditor(gui, points);
+        curveTest.makeCurveEditor(gui, this.particleSystem.emitRateSpline!, points);
 
 
         // const shaderMat = new CylinderRingsMaterial().clone();

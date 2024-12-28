@@ -1,5 +1,6 @@
 import GUI from "lil-gui";
 import { Utility } from "../Utilitites/Utility";
+import { LinearSpline } from "../Utilitites/LinearSpline";
 
 type PointId = string;
 
@@ -24,7 +25,7 @@ export class CurveEditor {
     currentPoint?: Point;
     fillArea?: HTMLElement;
 
-    makeCurveEditor(gui: GUI, points: any) {
+    makeCurveEditor(gui: GUI, linearSpline: LinearSpline, dummy: any) {
 
         // Build up the CurveController ui elements and events
         const div = document.createElement("div");
@@ -60,22 +61,34 @@ export class CurveEditor {
             this.currentPoint = undefined;
         }
 
-        // Make the end points
-        const pointLeft = this.makePoint(this.POINT_RADIUS, this.POINT_RADIUS, true);
-        const pointRight = this.makePoint(this.WIDTH - this.POINT_RADIUS, this.POINT_RADIUS, true);
-        this.points.push(pointLeft, pointRight);
+        // Make the points
+        const width = this.WIDTH - 2 * this.POINT_RADIUS;
+        const height = this.HEIGHT - 2 * this.POINT_RADIUS;
+        const top = this.POINT_RADIUS;
+        const left = this.POINT_RADIUS;
+        const maxValue = 10; // FIXME: until we have scalar or some other way to fit the range
+        for (let i = 0; i < linearSpline._points.length; i++) {
+            const t = linearSpline._points[i][0];
+            const value = linearSpline._points[i][1];
+            const cx = left + t * width;
+            const cy = top + height / maxValue * (maxValue - value);
+            const point = this.makePoint(cx, cy, i === 0 || i === linearSpline._points.length - 1 ? true : false);
+            this.points.push(point);
+        }
 
         // Iterate the points to draw a shape connecting them
         this.fillArea = this.connectPoints();
         svg.append(this.fillArea);
 
-        // Points last so they'll be on top
-        svg.append(pointLeft.element, pointRight.element);
+        // Put points into dom last so they'll be on top
+        this.points.forEach(point => {
+            svg.append(point.element);
+        });
 
         div.append(svg);
 
         // Call lil-gui to make it and append our built-up div
-        const curveEditor = gui.add(points, "stub");
+        const curveEditor = gui.add(dummy, "stub");
         curveEditor.domElement.append(div);
 
         // Wire up events as necessary
