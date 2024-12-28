@@ -43,14 +43,7 @@ export class CurveEditor {
         svg.onpointerdown = (event: PointerEvent) => {
             event.stopPropagation();
             if (this.currentPoint) {
-                // This covers the case where:
-                // 1. user clicks on a point, moves outside the svg element, and then re enters it
-                // 2. The user notices pointer is up but still "stuck" to the point
-                // 3. So then the user clicks and control flows to here
-                // 4. But it was not a new point that was desired, the click was to get the point unstuck
-                // 5. An alternate way to handle this case would have been to unset the current point on pointerleave, but this way is more convenient for the user
-                this.currentPoint = undefined;
-                return;
+                throw new Error(`${Utility.timestamp()} Unexpected condition. currentPoint is set??`);
             }
 
             const point = this.insertPoint(event);
@@ -72,6 +65,11 @@ export class CurveEditor {
             event.stopPropagation();
             this.currentPoint = undefined;
         }
+
+        svg.onpointerleave = (event: PointerEvent) => {
+            event.stopPropagation();
+            this.currentPoint = undefined;
+        };
 
         // Make the points
         const domValues = this.splineToDom(linearSpline);
