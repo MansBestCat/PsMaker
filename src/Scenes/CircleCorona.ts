@@ -41,16 +41,6 @@ export class CircleCorona {
         const ambientlight = new AmbientLight(0x101010);
         data.scene.add(ambientlight);
 
-        // Mock the points from the LinearSpline structure
-        const points = {
-            stub: () => {
-                // For our custom Controller, we need to choose a type lil-gui recognizes.
-                // The choice of "function" / button type is totally arbitrary.
-                // The widget will be hidden in favor of the ui we build for curve editing.
-                console.log(`${Utility.timestamp()} The button stub function fired.`);
-            }
-        };
-
         const ground = new Mesh(new BoxGeometry(10, 1, 10), new MeshPhongMaterial({ color: new Color(0x333333) }));
         ground.position.y = -2;
         data.scene.add(ground);
@@ -72,9 +62,9 @@ export class CircleCorona {
         const gui = new GUI();
         const psCorona = this.particleSystem as Corona;
         const ceEmitRate = new CurveEditor();
-        ceEmitRate.makeCurveEditor(gui, psCorona.emitRateSpline!, points);
+        ceEmitRate.makeCurveEditor(gui, psCorona.emitRateSpline!);
         const ceAlpha = new CurveEditor();
-        ceAlpha.makeCurveEditor(gui, psCorona.alphaSpline, points);
+        ceAlpha.makeCurveEditor(gui, psCorona.alphaSpline);
 
         // const shaderMat = new CylinderRingsMaterial().clone();
         // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");

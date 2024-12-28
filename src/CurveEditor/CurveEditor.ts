@@ -1,4 +1,4 @@
-import GUI from "lil-gui";
+import GUI, { FunctionController } from "lil-gui";
 import { Utility } from "../Utilitites/Utility";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 
@@ -30,7 +30,7 @@ export class CurveEditor {
     currentPoint?: Point;
     fillArea?: HTMLElement;
 
-    makeCurveEditor(gui: GUI, linearSpline: LinearSpline, dummy: any) {
+    makeCurveEditor(gui: GUI, linearSpline: LinearSpline) {
 
         // Build up the CurveController ui elements and events
         const div = document.createElement("div");
@@ -93,7 +93,8 @@ export class CurveEditor {
         div.append(svg);
 
         // Call lil-gui to make it and append our built-up div
-        const curveEditor = gui.add(dummy, "stub");
+        const curveEditor = gui.add({ stub: () => { } }, "stub");
+        (curveEditor as FunctionController).$button.style.display = "none"; // Remove the function/button. We are not using it.
         curveEditor.domElement.append(div);
 
         // Wire up events as necessary
