@@ -111,6 +111,21 @@ export class CurveEditor {
         return domValues;
     }
 
+    xDomToSpline(cx: number): number {
+        const width = this.WIDTH - 2 * this.POINT_RADIUS;
+        const left = this.POINT_RADIUS;
+        const t = (cx - left) / width;
+        return t;
+    }
+
+    yDomToSpline(cy: number): number {
+        const height = this.HEIGHT - 2 * this.POINT_RADIUS;
+        const top = this.POINT_RADIUS;
+        const maxValue = 10; // FIXME: until we have scalar or some other way to fit the range
+        const value = -((cy - top) * (maxValue / height) - maxValue);
+        return value;
+    }
+
     pointerMove(event: PointerEvent) {
 
         const point = this.pointsMap.get(this.currentPoint!.element.dataset.pointId!)!;
@@ -133,9 +148,13 @@ export class CurveEditor {
 
         if (!this.currentPoint!.lockX && xBetweenPoints) {
             this.currentPoint!.element.setAttribute("cx", event.offsetX.toString());
+            const t = this.xDomToSpline(event.offsetX);
+            console.log(`${Utility.timestamp()} set t to ${t}`);
         }
         if (event.offsetY > this.POINT_RADIUS && event.offsetY < this.HEIGHT - this.POINT_RADIUS) {
             this.currentPoint!.element.setAttribute("cy", event.offsetY.toString());
+            const value = this.yDomToSpline(event.offsetY);
+            console.log(`${Utility.timestamp()} set value to ${value}`);
         }
         this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
     }
