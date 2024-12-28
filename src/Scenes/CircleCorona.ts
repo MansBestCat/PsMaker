@@ -60,6 +60,10 @@ export class CircleCorona {
         // Gui needs to be defined after the ps is instantiated
         // Because curve editors need to have access to the linear splines inside the ps object
         const gui = new GUI();
+        gui.domElement.onpointermove = (event: PointerEvent) => {
+            // Prevent pointer events on the gui from interfering with orbital camera
+            event.stopPropagation();
+        }
         const psCorona = this.particleSystem as Corona;
         const ceEmitRate = new CurveEditor();
         ceEmitRate.makeCurveEditor(gui, psCorona.emitRateSpline!, "Emission rate");
