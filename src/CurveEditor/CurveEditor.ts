@@ -30,7 +30,7 @@ export class CurveEditor {
     currentPoint?: Point;
     fillArea?: HTMLElement;
 
-    makeCurveEditor(gui: GUI, linearSpline: LinearSpline) {
+    makeCurveEditor(gui: GUI, linearSpline: LinearSpline, labelText: string) {
 
         // Build up the CurveController ui elements and events
         const div = document.createElement("div");
@@ -91,6 +91,10 @@ export class CurveEditor {
         });
 
         div.append(svg);
+
+        const label = document.createElement("p");
+        label.innerHTML = labelText;
+        div.append(label);
 
         // Call lil-gui to make it and append our built-up div
         const curveEditor = gui.add({ stub: () => { } }, "stub");

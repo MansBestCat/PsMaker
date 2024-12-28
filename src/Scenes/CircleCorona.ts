@@ -62,9 +62,9 @@ export class CircleCorona {
         const gui = new GUI();
         const psCorona = this.particleSystem as Corona;
         const ceEmitRate = new CurveEditor();
-        ceEmitRate.makeCurveEditor(gui, psCorona.emitRateSpline!);
+        ceEmitRate.makeCurveEditor(gui, psCorona.emitRateSpline!, "Emission rate");
         const ceAlpha = new CurveEditor();
-        ceAlpha.makeCurveEditor(gui, psCorona.alphaSpline);
+        ceAlpha.makeCurveEditor(gui, psCorona.alphaSpline, "Alpha");
 
         // const shaderMat = new CylinderRingsMaterial().clone();
         // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");
