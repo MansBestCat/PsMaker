@@ -17,8 +17,8 @@ export class CurveEditor {
 
     SVGNS = "http://www.w3.org/2000/svg";
     POINT_RADIUS = 8;
-    WIDTH = 150;
-    HEIGHT = 75;
+    WIDTH = 238;
+    HEIGHT = 100;
     AVAILABLE_WIDTH = this.WIDTH - 2 * this.POINT_RADIUS;
     AVAILABLE_HEIGHT = this.HEIGHT - 2 * this.POINT_RADIUS;
     TOP = this.POINT_RADIUS;
@@ -98,6 +98,7 @@ export class CurveEditor {
 
         // Call lil-gui to make it and append our built-up div
         const curveEditor = gui.add({ stub: () => { } }, "stub");
+        curveEditor.$widget.style.display = "none";
         (curveEditor as FunctionController).$button.style.display = "none"; // Remove the function/button. We are not using it.
         curveEditor.domElement.append(div);
 
