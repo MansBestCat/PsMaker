@@ -62,17 +62,10 @@ export class CurveEditor {
         }
 
         // Make the points
-        const width = this.WIDTH - 2 * this.POINT_RADIUS;
-        const height = this.HEIGHT - 2 * this.POINT_RADIUS;
-        const top = this.POINT_RADIUS;
-        const left = this.POINT_RADIUS;
-        const maxValue = 10; // FIXME: until we have scalar or some other way to fit the range
-        for (let i = 0; i < linearSpline._points.length; i++) {
-            const t = linearSpline._points[i][0];
-            const value = linearSpline._points[i][1];
-            const cx = left + t * width;
-            const cy = top + height / maxValue * (maxValue - value);
-            const point = this.makePoint(cx, cy, i === 0 || i === linearSpline._points.length - 1 ? true : false);
+        const domValues = this.splineToDom(linearSpline);
+        for (let i = 0; i < domValues.length; i++) {
+            const { cx, cy } = domValues[i];
+            const point = this.makePoint(cx, cy, i === 0 || i === domValues.length - 1 ? true : false);
             this.points.push(point);
         }
 
@@ -99,6 +92,23 @@ export class CurveEditor {
             console.log(`${Utility.timestamp()} onFinChange`);
         });
 
+    }
+
+    splineToDom(linearSpline: LinearSpline): Array<{ cx: number, cy: number }> {
+        const domValues = new Array();
+        const width = this.WIDTH - 2 * this.POINT_RADIUS;
+        const height = this.HEIGHT - 2 * this.POINT_RADIUS;
+        const top = this.POINT_RADIUS;
+        const left = this.POINT_RADIUS;
+        const maxValue = 10; // FIXME: until we have scalar or some other way to fit the range
+        for (let i = 0; i < linearSpline._points.length; i++) {
+            const t = linearSpline._points[i][0];
+            const value = linearSpline._points[i][1];
+            const cx = left + t * width;
+            const cy = top + height / maxValue * (maxValue - value);
+            domValues.push({ cx, cy });
+        }
+        return domValues;
     }
 
     pointerMove(event: PointerEvent) {
