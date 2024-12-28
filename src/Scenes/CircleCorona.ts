@@ -70,9 +70,11 @@ export class CircleCorona {
         // Gui needs to be defined after the ps is instantiated
         // Because curve editors need to have access to the linear splines inside the ps object
         const gui = new GUI();
-        const curveTest = new CurveEditor();
-        curveTest.makeCurveEditor(gui, this.particleSystem.emitRateSpline!, points);
-
+        const psCorona = this.particleSystem as Corona;
+        const ceEmitRate = new CurveEditor();
+        ceEmitRate.makeCurveEditor(gui, psCorona.emitRateSpline!, points);
+        const ceAlpha = new CurveEditor();
+        ceAlpha.makeCurveEditor(gui, psCorona.alphaSpline, points);
 
         // const shaderMat = new CylinderRingsMaterial().clone();
         // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");
