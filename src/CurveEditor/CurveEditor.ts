@@ -33,11 +33,13 @@ export class CurveEditor {
     currentPoint?: Point;
     fillArea?: HTMLElement;
     isColor = false;
+    inputColor?: HTMLInputElement;
 
     makeCurveEditor(gui: GUI, linearSpline: LinearSpline, labelText: string) {
 
         // Build up the CurveController ui elements and events
         const div = document.createElement("div");
+        div.style.position = "relative";
 
         const svg = document.createElementNS(this.SVGNS, "svg") as HTMLElement;
         svg.setAttribute("width", this.WIDTH + "px");
@@ -84,6 +86,18 @@ export class CurveEditor {
             const lockY = this.isColor;
             const point = this.makePoint(cx, cy, lockX, lockY);
             this.points.push(point);
+        }
+
+        if (this.isColor) {
+            const input = document.createElement("input");
+            input.type = "color";
+            input.style.position = "absolute";
+            input.style.visibility = "hidden";
+            input.onchange = () => {
+                console.log(`${Utility.timestamp()} change`)
+            };
+            div.append(input);
+            this.inputColor = input;
         }
 
         // Iterate the points to draw a shape connecting them
@@ -218,6 +232,9 @@ export class CurveEditor {
             event.stopPropagation();
             const element = event.target as HTMLElement;
             this.currentPoint = this.pointsMap.get(element.dataset.pointId!);
+            if (this.isColor) {
+                this.inputColor?.showPicker();
+            }
         }
         return point;
     }
