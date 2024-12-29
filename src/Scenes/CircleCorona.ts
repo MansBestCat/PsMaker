@@ -41,12 +41,16 @@ export class CircleCorona {
         const ambientlight = new AmbientLight(0x101010);
         data.scene.add(ambientlight);
 
+        // camera
         data.camera.position.set(0, 7, -12);
         data.camera?.lookAt(0, 2, 0);
 
+        // sphere
         const sphere = new Mesh(new SphereGeometry(2), new MeshPhongMaterial({ color: new Color(0x0000ff) }));
         data.scene.add(sphere);
         sphere.position.copy(data.camera.position.clone().multiplyScalar(0.33));
+
+        // Ground
         // const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xeeeeee) }));
         // data.scene.add(ground);
 
