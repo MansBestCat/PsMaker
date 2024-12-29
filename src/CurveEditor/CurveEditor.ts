@@ -94,7 +94,7 @@ export class CurveEditor {
             input.type = "color";
             input.style.position = "absolute";
             input.style.visibility = "hidden";
-            input.onchange = this.inputColorChange.bind(this);
+            input.onchange = this.inputColorChange.bind(this, linearSpline);
             div.append(input);
             this.inputColor = input;
         }
@@ -130,8 +130,16 @@ export class CurveEditor {
 
     }
 
-    inputColorChange() {
+    inputColorChange(linearSpline: LinearSpline, event: Event) {
         console.log(`${Utility.timestamp()} input change. lastColorPoint is ${this.lastColorPoint}`)
+        const point = this.pointsMap.get(this.lastColorPoint!.element.dataset.pointId!)!;
+        const index = this.points.indexOf(point);
+        const value = new Color((event.target as HTMLInputElement).value);
+        linearSpline._points[index][1] = value;
+
+        // TODO: color the point and fill gradient
+        //this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
+
     }
 
     splineToDom(linearSpline: LinearSpline): Array<{ cx: number, cy: number }> {
