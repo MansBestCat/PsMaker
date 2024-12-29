@@ -1,6 +1,7 @@
 import GUI, { FunctionController } from "lil-gui";
 import { Utility } from "../Utilitites/Utility";
 import { LinearSpline } from "../Utilitites/LinearSpline";
+import { Color } from "three";
 
 type PointId = string;
 
@@ -78,7 +79,7 @@ export class CurveEditor {
         for (let i = 0; i < domValues.length; i++) {
             const { cx, cy } = domValues[i];
             const lockX = i === 0 || i === domValues.length - 1 ? true : false;
-            const lockY = false;
+            const lockY = linearSpline._points.some(point => point[1] instanceof Color ? true : false);
             const point = this.makePoint(cx, cy, lockX, lockY);
             this.points.push(point);
         }
@@ -120,7 +121,12 @@ export class CurveEditor {
             const t = linearSpline._points[i][0];
             const value = linearSpline._points[i][1];
             const cx = this.LEFT + t * this.AVAILABLE_WIDTH;
-            const cy = this.TOP + this.AVAILABLE_HEIGHT / this.MAX_VALUE * (this.MAX_VALUE - value);
+            let cy;
+            if (value instanceof Color) {
+                cy = this.TOP;
+            } else {
+                cy = this.TOP + this.AVAILABLE_HEIGHT / this.MAX_VALUE * (this.MAX_VALUE - value);
+            }
             domValues.push({ cx, cy });
         }
         return domValues;
@@ -161,7 +167,7 @@ export class CurveEditor {
             linearSpline._points[index][0] = t;
             //console.log(`${Utility.timestamp()} set t to ${t}`);
         }
-        if (event.offsetY > this.POINT_RADIUS && event.offsetY < this.HEIGHT - this.POINT_RADIUS) {
+        if (!this.currentPoint!.lockY && event.offsetY > this.POINT_RADIUS && event.offsetY < this.HEIGHT - this.POINT_RADIUS) {
             this.currentPoint!.element.setAttribute("cy", event.offsetY.toString());
             const value = this.yDomToSpline(event.offsetY);
             linearSpline._points[index][1] = value;
@@ -171,8 +177,9 @@ export class CurveEditor {
     }
 
     insertPoint(event: PointerEvent, linearSpline: LinearSpline): Point {
-        // Add a new point
-        const point = this.makePoint(event.offsetX, event.offsetY, false, false);
+        // Add a new point        
+        const lockY = linearSpline._points.some(point => point[1] instanceof Color ? true : false);
+        const point = this.makePoint(event.offsetX, event.offsetY, false, lockY);
         for (let i = 1; i < this.points.length; i++) {
             const cx = parseFloat(this.points[i].element.getAttribute("cx")!);
             if (cx > event.offsetX) {
