@@ -47,6 +47,8 @@ export class CircleCorona {
         const sphere = new Mesh(new SphereGeometry(2), new MeshPhongMaterial({ color: new Color(0x0000ff) }));
         data.scene.add(sphere);
         sphere.position.copy(data.camera.position.clone().multiplyScalar(0.33));
+        // const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xeeeeee) }));
+        // data.scene.add(ground);
 
         this.particleSystem = new Corona({
             parent: data.scene, maxEmitterLife: undefined, frequency: data.tickSize
