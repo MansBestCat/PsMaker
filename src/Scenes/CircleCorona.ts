@@ -1,4 +1,4 @@
-import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshPhongMaterial, Vector3 } from "three";
+import { AmbientLight, BoxGeometry, CircleGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, MeshPhongMaterial, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
 import { Data } from "../Data";
 import { ParticleSystemBase } from "../ParticleSystems/ParticleSystemBase";
@@ -41,16 +41,13 @@ export class CircleCorona {
         const ambientlight = new AmbientLight(0x101010);
         data.scene.add(ambientlight);
 
-        const ground = new Mesh(new BoxGeometry(10, 1, 10), new MeshPhongMaterial({ color: new Color(0x333333) }));
-        ground.position.y = -2;
-        data.scene.add(ground);
-
-
-        // TODO: Place here any meshes that are needed
-
         data.camera.position.set(0, 7, -12);
         data.camera?.lookAt(0, 2, 0);
 
+        const circle = new Mesh(new CircleGeometry(2), new MeshBasicMaterial({ color: new Color(0x0000ff) }));
+        data.scene.add(circle);
+        circle.position.copy(data.camera.position.clone().multiplyScalar(0.33));
+        circle.lookAt(data.camera.position);
 
         this.particleSystem = new Corona({
             parent: data.scene, maxEmitterLife: undefined, frequency: data.tickSize

@@ -65,7 +65,7 @@ export class Corona extends ParticleSystemBase {
             vertexShader: _VS,
             fragmentShader: _FS,
             blending: NormalBlending,
-            depthTest: false,
+            depthTest: true,
             depthWrite: false,
             transparent: true,
             vertexColors: true,
