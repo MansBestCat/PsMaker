@@ -83,7 +83,11 @@ export class CircleCorona {
 
         //gui.add(shaderMat.clock, "start").name("reset clock");
 
-        cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
+        const orbitControls = cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
+        orbitControls.addEventListener('change', () => {
+            this.particleSystem.points.lookAt(data.camera!.position);
+            this.particleSystem.points.rotateX(-Math.PI / 2);
+        });
 
         this.animate();
     }

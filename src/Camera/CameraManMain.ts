@@ -59,7 +59,7 @@ export class CameraManMain {
     }
 
     /** Sets or removes the orbital controls */
-    makeCameraOrbital(target: Vector3): void {
+    makeCameraOrbital(target: Vector3): OrbitControls {
 
         this.orbitControls = new OrbitControls(this.data.camera, this.data.canvas.parentElement);
         if (!this.orbitControls) {
@@ -67,6 +67,7 @@ export class CameraManMain {
         }
         this.orbitControls.target = target;
         this.orbitControls.update();
+        return this.orbitControls;
 
     }
 
