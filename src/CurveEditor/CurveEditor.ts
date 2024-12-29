@@ -34,6 +34,7 @@ export class CurveEditor {
     fillArea?: HTMLElement;
     isColor = false;
     inputColor?: HTMLInputElement;
+    lastColorPoint?: Point;
 
     makeCurveEditor(gui: GUI, linearSpline: LinearSpline, labelText: string) {
 
@@ -93,9 +94,7 @@ export class CurveEditor {
             input.type = "color";
             input.style.position = "absolute";
             input.style.visibility = "hidden";
-            input.onchange = () => {
-                console.log(`${Utility.timestamp()} change`)
-            };
+            input.onchange = this.inputColorChange.bind(this);
             div.append(input);
             this.inputColor = input;
         }
@@ -129,6 +128,10 @@ export class CurveEditor {
             console.log(`${Utility.timestamp()} onFinChange`);
         });
 
+    }
+
+    inputColorChange() {
+        console.log(`${Utility.timestamp()} input change. lastColorPoint is ${this.lastColorPoint}`)
     }
 
     splineToDom(linearSpline: LinearSpline): Array<{ cx: number, cy: number }> {
@@ -233,6 +236,7 @@ export class CurveEditor {
             const element = event.target as HTMLElement;
             this.currentPoint = this.pointsMap.get(element.dataset.pointId!);
             if (this.isColor) {
+                this.lastColorPoint = this.currentPoint;
                 this.inputColor?.showPicker();
             }
         }
