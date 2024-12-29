@@ -69,7 +69,7 @@ export class Corona extends ParticleSystemBase {
             depthWrite: false,
             transparent: true,
             vertexColors: true,
-            name: "smoke puff"
+            name: "corona"
         });
 
         this.points = new Points(this.geometry, this.material);
