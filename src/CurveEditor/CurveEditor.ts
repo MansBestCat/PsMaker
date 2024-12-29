@@ -8,8 +8,10 @@ class Point {
     constructor(
         public pointId: PointId,
         public element: HTMLElement,
-        public lockX: boolean   // Whether the x axis movement for the point is prevented.
+        public lockX: boolean,   // Whether the x axis movement for the point is prevented.
         // Will be set to true for points 0 and n-1
+        public lockY: boolean   // Whether the y axis movement for the point is prevented.
+        // Will be set to true for colors
     ) { }
 }
 
@@ -75,7 +77,9 @@ export class CurveEditor {
         const domValues = this.splineToDom(linearSpline);
         for (let i = 0; i < domValues.length; i++) {
             const { cx, cy } = domValues[i];
-            const point = this.makePoint(cx, cy, i === 0 || i === domValues.length - 1 ? true : false);
+            const lockX = i === 0 || i === domValues.length - 1 ? true : false;
+            const lockY = false;
+            const point = this.makePoint(cx, cy, lockX, lockY);
             this.points.push(point);
         }
 
@@ -168,7 +172,7 @@ export class CurveEditor {
 
     insertPoint(event: PointerEvent): Point {
         // Add a new point
-        const point = this.makePoint(event.offsetX, event.offsetY, false);
+        const point = this.makePoint(event.offsetX, event.offsetY, false, false);
         for (let i = 1; i < this.points.length; i++) {
             const cx = parseFloat(this.points[i].element.getAttribute("cx")!);
             if (cx > event.offsetX) {
@@ -183,9 +187,9 @@ export class CurveEditor {
     /**
      * Make a point, add it to the map, and return it.
      */
-    makePoint(cx: number, cy: number, lockX: boolean): Point {
+    makePoint(cx: number, cy: number, lockX: boolean, lockY: boolean): Point {
         const pointId = Utility.generateUid(8);
-        const point = new Point(pointId, this.makePointElement(pointId, cx, cy), lockX);
+        const point = new Point(pointId, this.makePointElement(pointId, cx, cy), lockX, lockY);
         this.pointsMap.set(point.pointId, point);
         return point;
     }
