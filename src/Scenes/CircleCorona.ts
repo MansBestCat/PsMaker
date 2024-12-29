@@ -85,10 +85,6 @@ export class CircleCorona {
 
         cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
 
-        document.addEventListener('mousemove', () => {
-            this.particleSystem.addParticle()
-        });
-
         this.animate();
     }
 
