@@ -128,13 +128,13 @@ export class Corona extends ParticleSystemBase {
         particle.maxLife = this.maxParticleLife;
         particle.life = 0;
         particle.rotation = Math.random() * 2.0 * Math.PI;
-        particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
+        particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation));
 
         this.particles.push(particle);
     }
 
     updateParticles(timeElapsed: number): void {
-        const V_DAMP_FACTOR = 0.1;
+        const V_DAMP_FACTOR = 0.01;
         const color = new Color();
         this.particles.forEach((p: Particle) => {
             p.life += timeElapsed;
@@ -145,7 +145,8 @@ export class Corona extends ParticleSystemBase {
             p.alpha = this.alphaSpline.get(t);
             p.size = this.sizeSpline.get(t);
             p.colour.copy(this.colorSpline.getResult(t, color));
-            p.position.add(p.velocity.clone().multiplyScalar((1 - t) * V_DAMP_FACTOR));
+            const velocity = p.velocity.clone().multiplyScalar(this.velocitySpline.get(t) * V_DAMP_FACTOR);
+            p.position.add(velocity);
         });
 
         this.particles = this.particles.filter(p =>
