@@ -45,7 +45,7 @@ export class CurveEditor {
         svg.onpointerdown = (event: PointerEvent) => {
             event.stopPropagation();
             if (this.currentPoint) {
-                throw new Error(`${Utility.timestamp()} Unexpected condition. currentPoint is set??`);
+                throw new Error(`${Utility.timestamp()} Unexpected condition. Expected currentPoint to be undefined`);
             }
 
             const point = this.insertPoint(event, linearSpline);
