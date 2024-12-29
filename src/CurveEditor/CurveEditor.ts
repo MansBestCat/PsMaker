@@ -48,7 +48,7 @@ export class CurveEditor {
                 throw new Error(`${Utility.timestamp()} Unexpected condition. currentPoint is set??`);
             }
 
-            const point = this.insertPoint(event);
+            const point = this.insertPoint(event, linearSpline);
             this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
             svg.append(point.element);
 
@@ -170,7 +170,7 @@ export class CurveEditor {
         this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
     }
 
-    insertPoint(event: PointerEvent): Point {
+    insertPoint(event: PointerEvent, linearSpline: LinearSpline): Point {
         // Add a new point
         const point = this.makePoint(event.offsetX, event.offsetY, false, false);
         for (let i = 1; i < this.points.length; i++) {
@@ -178,6 +178,9 @@ export class CurveEditor {
             if (cx > event.offsetX) {
                 // Insert the point at the index i
                 this.points.splice(i, 0, point);
+                const _cx = this.xDomToSpline(parseFloat(point.element.getAttribute("cx")!));
+                const _cy = this.yDomToSpline(parseFloat(point.element.getAttribute("cy")!));
+                linearSpline._points.splice(i, 0, [_cx, _cy]);
                 break;
             }
         }
