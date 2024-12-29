@@ -32,6 +32,7 @@ export class CurveEditor {
     pointsMap = new Map<PointId, Point>();  // Map,     for access from pointer events
     currentPoint?: Point;
     fillArea?: HTMLElement;
+    isColor = false;
 
     makeCurveEditor(gui: GUI, linearSpline: LinearSpline, labelText: string) {
 
@@ -75,11 +76,12 @@ export class CurveEditor {
         };
 
         // Make the points
+        this.isColor = linearSpline._points.some(point => point[1] instanceof Color ? true : false);
         const domValues = this.splineToDom(linearSpline);
         for (let i = 0; i < domValues.length; i++) {
             const { cx, cy } = domValues[i];
             const lockX = i === 0 || i === domValues.length - 1 ? true : false;
-            const lockY = linearSpline._points.some(point => point[1] instanceof Color ? true : false);
+            const lockY = this.isColor;
             const point = this.makePoint(cx, cy, lockX, lockY);
             this.points.push(point);
         }
@@ -178,8 +180,7 @@ export class CurveEditor {
 
     insertPoint(event: PointerEvent, linearSpline: LinearSpline): Point {
         // Add a new point        
-        const lockY = linearSpline._points.some(point => point[1] instanceof Color ? true : false);
-        const point = this.makePoint(event.offsetX, event.offsetY, false, lockY);
+        const point = this.makePoint(event.offsetX, event.offsetY, false, this.isColor);
         for (let i = 1; i < this.points.length; i++) {
             const cx = parseFloat(this.points[i].element.getAttribute("cx")!);
             if (cx > event.offsetX) {
