@@ -99,7 +99,7 @@ export class CurveEditor {
         label.innerHTML = labelText;
         div.append(label);
 
-        // Call lil-gui to make it and append our built-up div
+        // Make the controller and append to it our built-up div
         const curveEditor = gui.add({ stub: () => { } }, "stub");
         curveEditor.$widget.style.display = "none";
         (curveEditor as FunctionController).$button.style.display = "none"; // Remove the function/button. We are not using it.
