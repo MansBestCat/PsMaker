@@ -107,15 +107,6 @@ export class CurveEditor {
             svg.append(point.element);
         });
 
-        if (this.isColor) {
-            const input = document.createElement("input");
-            input.type = "color";
-            input.style.position = "absolute";
-            input.style.visibility = "hidden";
-            input.onchange = this.inputColorChange.bind(this);
-            div.append(input);
-            this.inputColor = input;
-        }
 
         div.append(svg);
 
@@ -139,6 +130,18 @@ export class CurveEditor {
         divOutput.innerHTML = this.toString();
         div.append(divOutput);
         this.divOutput = divOutput;
+
+        if (this.isColor) {
+            // Create a color input for opening the color picker
+            const input = document.createElement("input");
+            input.type = "color";
+            input.style.position = "absolute";
+            input.style.visibility = "hidden";
+            input.onchange = this.inputColorChange.bind(this);
+            div.append(input);
+            this.inputColor = input;
+
+        }
 
         // Make the controller and append to it our built-up div
         const curveEditor = this.gui.add({ stub: () => { } }, "stub");
