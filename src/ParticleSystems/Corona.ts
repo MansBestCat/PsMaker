@@ -39,7 +39,7 @@ void main() {
 }`;
 
 export class Corona extends ParticleSystemBase {
-    maxParticleLife = 400;
+    maxParticleLife = 2000;
 
     alphaSpline: LinearSpline;
     colorSpline: LinearSplineOut;
@@ -86,8 +86,8 @@ export class Corona extends ParticleSystemBase {
             result.copy(a);
             return result.lerp(b, t);
         });
-        this.colorSpline.addPoint(0.0, new Color(0xFF0000));
-        this.colorSpline.addPoint(1.0, new Color(0x00FF00));
+        this.colorSpline.addPoint(0.0, new Color(0x70aeff));
+        this.colorSpline.addPoint(1.0, new Color(0x1b60bb));
 
         this.sizeSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
@@ -98,7 +98,8 @@ export class Corona extends ParticleSystemBase {
         this.velocitySpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (a - b);
         });
-        this.velocitySpline.addPoint(0.0, 2.8);
+        this.velocitySpline.addPoint(0.0, 10.0);
+        this.velocitySpline.addPoint(0.25, 4.0);
         this.velocitySpline.addPoint(1.0, 0.0);
 
         this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
