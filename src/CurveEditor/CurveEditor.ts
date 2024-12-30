@@ -298,11 +298,12 @@ export class CurveEditor {
     /** Serialized list of points and values */
     toString(): string {
         let output = "";
-        this.points.forEach((point: Point, index: number) => {
-            const x = this.xDomToSpline(parseFloat(point.element.getAttribute("cx")!));
-            const y = this.yDomToSpline(parseFloat(point.element.getAttribute("cy")!));
-            output += `p_${index} = (${Utility.round(x, 2)}, ${Utility.round(y, 2)})\n`;
-        });
+        for (let i = 0; i < this.linearSpline._points.length; i++) {
+            const x = Utility.round(parseFloat(this.linearSpline._points[i][0]), 2);
+            const y = this.isColor ? this.linearSpline._points[i][1].getHexString()
+                : Utility.round(parseFloat(this.linearSpline._points[i][1]), 2);
+            output += `p_${i} = (${x}, ${y})\n`;
+        }
         return output;
     }
 }
