@@ -34,7 +34,7 @@ export class CurveEditor {
     fillArea?: HTMLElement;
     isColor = false;
     inputColor?: HTMLInputElement;
-    lastColorPoint?: Point;
+    divOutput?: HTMLDivElement;
 
     makeCurveEditor(gui: GUI, linearSpline: LinearSpline, labelText: string) {
 
@@ -135,6 +135,7 @@ export class CurveEditor {
         divOutput.style.padding = "2px 3px";
         divOutput.innerHTML = this.toString();
         div.append(divOutput);
+        this.divOutput = divOutput;
 
         // Make the controller and append to it our built-up div
         const curveEditor = gui.add({ stub: () => { } }, "stub");
