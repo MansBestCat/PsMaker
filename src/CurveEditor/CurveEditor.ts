@@ -57,6 +57,9 @@ export class CurveEditor {
             }
 
             const point = this.insertPoint(event);
+
+            this.updateFillAndOutput();
+
             svg.append(point.element);
 
             this.currentPoint = point;
@@ -69,11 +72,7 @@ export class CurveEditor {
             }
             this.pointerMove(event);
 
-            // Draw the fill
-            this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
-
-            // output the points
-            divOutput.innerHTML = this.toString();
+            this.updateFillAndOutput();
         }
 
         svg.onpointerup = (event: PointerEvent) => {
@@ -154,8 +153,7 @@ export class CurveEditor {
         const value = new Color((event.target as HTMLInputElement).value);
         this.linearSpline._points[index][1] = value;
 
-        // TODO: color the point and fill gradient
-        //this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
+        this.updateFillAndOutput();
 
     }
 
@@ -272,6 +270,11 @@ export class CurveEditor {
         element.setAttribute("fill", "white");
         element.setAttribute("d", `${this.buildPathString()}`);
         return element;
+    }
+
+    updateFillAndOutput() {
+        this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
+        this.divOutput!.innerHTML = this.toString();
     }
 
     buildPathString(): string {
