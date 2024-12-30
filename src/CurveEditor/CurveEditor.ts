@@ -31,9 +31,10 @@ export class CurveEditor {
     points = new Array<Point>();            // Ordered, for output to the points of the LinearSpline
     pointsMap = new Map<PointId, Point>();  // Map,     for access from pointer events
     currentPoint?: Point;
-    fillArea?: HTMLElement;
     isColor = false;
+    lastColorPoint?: Point;
     inputColor?: HTMLInputElement;
+    fillArea?: HTMLElement;
     divOutput?: HTMLDivElement;
 
     makeCurveEditor(gui: GUI, linearSpline: LinearSpline, labelText: string) {
