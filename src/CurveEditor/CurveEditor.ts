@@ -66,6 +66,9 @@ export class CurveEditor {
                 return;
             }
             this.pointerMove(event, linearSpline);
+
+            // Draw the fill
+            this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
         }
 
         svg.onpointerup = (event: PointerEvent) => {
@@ -192,7 +195,6 @@ export class CurveEditor {
             linearSpline._points[index][1] = value;
             //console.log(`${Utility.timestamp()} set value to ${value}`);
         }
-        this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
     }
 
     insertPoint(event: PointerEvent, linearSpline: LinearSpline): Point {
