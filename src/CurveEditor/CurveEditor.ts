@@ -120,14 +120,6 @@ export class CurveEditor {
         (curveEditor as FunctionController).$button.style.display = "none"; // Remove the function/button. We are not using it.
         curveEditor.domElement.append(div);
 
-        // Wire up events as necessary
-        curveEditor.onChange(() => {
-            console.log(`${Utility.timestamp()} onChange`);
-        });
-        curveEditor.onFinishChange(() => {
-            console.log(`${Utility.timestamp()} onFinChange`);
-        });
-
     }
 
     inputColorChange(linearSpline: LinearSpline, event: Event) {
