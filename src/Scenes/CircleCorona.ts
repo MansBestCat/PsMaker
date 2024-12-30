@@ -80,17 +80,6 @@ export class CircleCorona {
         ceColor.makeCurveEditor("Color");
         gui.add(this.particleSystem, "maxParticleLife", 0, 2000);
 
-        // const shaderMat = new CylinderRingsMaterial().clone();
-        // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");
-        // gui.add(shaderMat.uniforms.uXTFactor, "value", 0, 10, 0.1).name("uXTFactor");
-        // gui.add(shaderMat.uniforms.uXTOffset, "value", 0, 10, 0.1).name("uXTOffset");
-
-        // const plainMat = new MeshBasicMaterial({ color: new Color(0x0000ff) });
-        // const mats = [shaderMat, plainMat, plainMat];
-        // mesh.material = mats;
-
-        //gui.add(shaderMat.clock, "start").name("reset clock");
-
         const orbitControls = cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
         orbitControls.addEventListener('change', () => {
             this.particleSystem.points.lookAt(data.camera!.position);
