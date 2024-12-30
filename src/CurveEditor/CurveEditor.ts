@@ -69,6 +69,9 @@ export class CurveEditor {
 
             // Draw the fill
             this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
+
+            // output the points
+            divOutput.innerHTML = this.toString();
         }
 
         svg.onpointerup = (event: PointerEvent) => {
@@ -116,6 +119,22 @@ export class CurveEditor {
         const label = document.createElement("p");
         label.innerHTML = labelText;
         div.append(label);
+
+        // Output pane, list of points and values
+        const divOutput = document.createElement("div");
+        divOutput.style.zIndex = "1";
+        divOutput.style.position = "absolute";
+        divOutput.style.background = "rgba(255, 255, 255, 0.5)";
+        divOutput.style.width = "60%";
+        divOutput.style.left = "24%";
+        divOutput.style.top = "8%";
+        divOutput.style.pointerEvents = "none";
+        divOutput.style.whiteSpace = "pre";
+        divOutput.style.color = "red";
+        divOutput.style.fontSize = "13px";
+        divOutput.style.padding = "2px 3px";
+        divOutput.innerHTML = this.toString();
+        div.append(divOutput);
 
         // Make the controller and append to it our built-up div
         const curveEditor = gui.add({ stub: () => { } }, "stub");
@@ -268,5 +287,16 @@ export class CurveEditor {
 
     pointPathString(index: number) {
         return `${this.points[index].element.getAttribute("cx")} ${this.points[index].element.getAttribute("cy")}`;
+    }
+
+    /** Serialized list of points and values */
+    toString(): string {
+        let output = "";
+        this.points.forEach((point: Point, index: number) => {
+            const x = this.xDomToSpline(parseFloat(point.element.getAttribute("cx")!));
+            const y = this.yDomToSpline(parseFloat(point.element.getAttribute("cy")!));
+            output += `p_${index} = (${Utility.round(x, 2)}, ${Utility.round(y, 2)})\n`;
+        });
+        return output;
     }
 }
