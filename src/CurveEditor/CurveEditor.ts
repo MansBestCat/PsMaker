@@ -38,6 +38,7 @@ export class CurveEditor {
     isColor = false;
     lastColorPoint?: Point;
     inputColor?: HTMLInputElement;
+    colorStops?: Array<Element>;
 
     constructor(public gui: GUI, public linearSpline: LinearSpline) { }
 
@@ -127,7 +128,6 @@ export class CurveEditor {
         divOutput.style.color = "red";
         divOutput.style.fontSize = "13px";
         divOutput.style.padding = "2px 3px";
-        divOutput.innerHTML = this.toString();
         div.append(divOutput);
         this.divOutput = divOutput;
 
@@ -141,7 +141,12 @@ export class CurveEditor {
             div.append(input);
             this.inputColor = input;
 
+            // Create the extra elements needed to render a color gradient
+            this.gradientSetup(svg, this.linearSpline._points.length);
         }
+
+        // All output elements are ready, do the initial rendering
+        this.updateFillAndOutput();
 
         // Make the controller and append to it our built-up div
         const curveEditor = this.gui.add({ stub: () => { } }, "stub");
@@ -152,7 +157,6 @@ export class CurveEditor {
     }
 
     inputColorChange(event: Event) {
-        console.log(`${Utility.timestamp()} input change. lastColorPoint is ${this.lastColorPoint}`)
         const point = this.pointsMap.get(this.lastColorPoint!.element.dataset.pointId!)!;
         const index = this.points.indexOf(point);
         const value = new Color((event.target as HTMLInputElement).value);
@@ -272,13 +276,18 @@ export class CurveEditor {
 
     makeFillElement(): HTMLElement {
         const element = document.createElementNS(this.SVGNS, "path") as HTMLElement;
-        element.setAttribute("fill", "white");
+        const fill = this.isColor ? 'url(#Gradient)' : "white";
+        element.setAttribute("fill", fill);
         element.setAttribute("d", `${this.buildPathString()}`);
         return element;
     }
 
     updateFillAndOutput() {
         this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
+        if (this.isColor) {
+            this.updateGradientStops();
+        }
+
         this.divOutput!.innerHTML = this.toString();
     }
 
@@ -310,5 +319,46 @@ export class CurveEditor {
             output += `p_${i} = (${x}, ${y})\n`;
         }
         return output;
+    }
+
+    gradientSetup(svg: Element, numPoints: number) {
+        var defs = document.createElementNS(this.SVGNS, 'defs');
+        var gradient = document.createElementNS(this.SVGNS, 'linearGradient');
+
+        // Apply the <lineargradient> to <defs>
+        gradient.id = 'Gradient';
+        gradient.setAttribute('x1', '0');
+        gradient.setAttribute('x2', '1');
+        gradient.setAttribute('y1', '0');
+        gradient.setAttribute('y2', '0');
+
+        // Create a <stop> element and set its offset based on the position of the for loop.
+        this.colorStops = new Array();
+        for (let i = 0; i < numPoints; i++) {
+            this.colorStops.push(document.createElementNS(this.SVGNS, 'stop'));
+        }
+
+        gradient.append(...this.colorStops);
+
+        defs.appendChild(gradient);
+
+        svg.appendChild(defs);
+
+    }
+
+    updateGradientStops() {
+        // Create <svg>, <defs>, <linearGradient> and <rect> elements using createElementNS to apply the SVG namespace.
+
+        // Parses an array of stop information and appends <stop> elements to the <linearGradient>
+        for (let i = 0; i < this.linearSpline._points.length; i++) {
+
+            const offset = Utility.round(this.linearSpline._points[i][0] * 100, 1) + "%";
+            const color = "#" + this.linearSpline._points[i][1].getHexString();
+
+            this.colorStops![i].setAttribute('offset', offset);
+            this.colorStops![i].setAttribute('stop-color', color);
+
+        }
+
     }
 }
