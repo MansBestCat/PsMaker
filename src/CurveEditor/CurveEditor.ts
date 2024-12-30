@@ -98,6 +98,15 @@ export class CurveEditor {
             this.points.push(point);
         }
 
+        // Iterate the points to draw a shape connecting them
+        this.fillArea = this.makeFillElement();
+        svg.append(this.fillArea);
+
+        // Put points into dom last so they'll be on top
+        this.points.forEach(point => {
+            svg.append(point.element);
+        });
+
         if (this.isColor) {
             const input = document.createElement("input");
             input.type = "color";
@@ -107,15 +116,6 @@ export class CurveEditor {
             div.append(input);
             this.inputColor = input;
         }
-
-        // Iterate the points to draw a shape connecting them
-        this.fillArea = this.makeFillElement();
-        svg.append(this.fillArea);
-
-        // Put points into dom last so they'll be on top
-        this.points.forEach(point => {
-            svg.append(point.element);
-        });
 
         div.append(svg);
 
