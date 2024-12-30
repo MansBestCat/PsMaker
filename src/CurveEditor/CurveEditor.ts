@@ -227,9 +227,9 @@ export class CurveEditor {
             if (cx > event.offsetX) {
                 // Insert the point at the index i
                 this.points.splice(i, 0, point);
-                const _cx = this.xDomToSpline(parseFloat(point.element.getAttribute("cx")!));
-                const _cy = this.yDomToSpline(parseFloat(point.element.getAttribute("cy")!));
-                this.linearSpline._points.splice(i, 0, [_cx, _cy]);
+                const t = this.xDomToSpline(parseFloat(point.element.getAttribute("cx")!));
+                const value = this.isColor ? new Color : this.yDomToSpline(parseFloat(point.element.getAttribute("cy")!));
+                this.linearSpline._points.splice(i, 0, [t, value]);
                 break;
             }
         }
