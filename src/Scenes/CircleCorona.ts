@@ -78,7 +78,7 @@ export class CircleCorona {
         ceVelocity.makeCurveEditor(gui, psCorona.velocitySpline, "Velocity");
         const ceColor = new CurveEditor();
         ceColor.makeCurveEditor(gui, psCorona.colorSpline, "Color");
-        gui.add(this.particleSystem, "maxParticleLife", 0, 1500);
+        gui.add(this.particleSystem, "maxParticleLife", 0, 2000);
 
         // const shaderMat = new CylinderRingsMaterial().clone();
         // gui.add(shaderMat.uniforms.uUvYOffset, "value", 0, 3, 0.1).name("uUvYOffset");

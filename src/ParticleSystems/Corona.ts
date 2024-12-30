@@ -79,7 +79,7 @@ export class Corona extends ParticleSystemBase {
         this.alphaSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this.alphaSpline.addPoint(0.0, 0.7);
+        this.alphaSpline.addPoint(0.0, 0.9);
         this.alphaSpline.addPoint(1.0, 0.0);
 
         this.colorSpline = new LinearSplineOut((t: number, a: Color, b: Color, result: Color) => {
@@ -92,20 +92,20 @@ export class Corona extends ParticleSystemBase {
         this.sizeSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this.sizeSpline.addPoint(0.0, 3.0);
-        this.sizeSpline.addPoint(1.0, 5.0);
+        this.sizeSpline.addPoint(0.0, 9.0);
+        this.sizeSpline.addPoint(1.0, 10.0);
 
         this.velocitySpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (a - b);
         });
-        this.velocitySpline.addPoint(0.0, 1.0);
+        this.velocitySpline.addPoint(0.0, 2.8);
         this.velocitySpline.addPoint(1.0, 0.0);
 
         this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this.emitRateSpline.addPoint(0.0, 3);
-        this.emitRateSpline.addPoint(0.2, 1.5);
+        this.emitRateSpline.addPoint(0.0, 10.0);
+        this.emitRateSpline.addPoint(0.1, 2.0);
         this.emitRateSpline.addPoint(1.0, 0);
 
         this.updateGeometry();
@@ -134,7 +134,7 @@ export class Corona extends ParticleSystemBase {
     }
 
     updateParticles(timeElapsed: number): void {
-        const V_DAMP_FACTOR = 0.01;
+        const V_DAMP_FACTOR = 0.001;
         const color = new Color();
         this.particles.forEach((p: Particle) => {
             p.life += timeElapsed;
