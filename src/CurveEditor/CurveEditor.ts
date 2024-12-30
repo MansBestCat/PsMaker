@@ -37,7 +37,9 @@ export class CurveEditor {
     fillArea?: HTMLElement;
     divOutput?: HTMLDivElement;
 
-    makeCurveEditor(gui: GUI, linearSpline: LinearSpline, labelText: string) {
+    constructor(public gui: GUI, public linearSpline: LinearSpline) { }
+
+    makeCurveEditor(labelText: string) {
 
         // Build up the CurveController ui elements and events
         const div = document.createElement("div");
@@ -54,8 +56,7 @@ export class CurveEditor {
                 throw new Error(`${Utility.timestamp()} Unexpected condition. Expected currentPoint to be undefined`);
             }
 
-            const point = this.insertPoint(event, linearSpline);
-            this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
+            const point = this.insertPoint(event);
             svg.append(point.element);
 
             this.currentPoint = point;
@@ -66,7 +67,7 @@ export class CurveEditor {
             if (!this.currentPoint) {
                 return;
             }
-            this.pointerMove(event, linearSpline);
+            this.pointerMove(event);
 
             // Draw the fill
             this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
@@ -86,8 +87,8 @@ export class CurveEditor {
         };
 
         // Make the points
-        this.isColor = linearSpline._points.some(point => point[1] instanceof Color ? true : false);
-        const domValues = this.splineToDom(linearSpline);
+        this.isColor = this.linearSpline._points.some(point => point[1] instanceof Color ? true : false);
+        const domValues = this.splineToDom();
         for (let i = 0; i < domValues.length; i++) {
             const { cx, cy } = domValues[i];
             const lockX = i === 0 || i === domValues.length - 1 ? true : false;
@@ -101,7 +102,7 @@ export class CurveEditor {
             input.type = "color";
             input.style.position = "absolute";
             input.style.visibility = "hidden";
-            input.onchange = this.inputColorChange.bind(this, linearSpline);
+            input.onchange = this.inputColorChange.bind(this);
             div.append(input);
             this.inputColor = input;
         }
@@ -139,30 +140,30 @@ export class CurveEditor {
         this.divOutput = divOutput;
 
         // Make the controller and append to it our built-up div
-        const curveEditor = gui.add({ stub: () => { } }, "stub");
+        const curveEditor = this.gui.add({ stub: () => { } }, "stub");
         curveEditor.$widget.style.display = "none";
         (curveEditor as FunctionController).$button.style.display = "none"; // Remove the function/button. We are not using it.
         curveEditor.domElement.append(div);
 
     }
 
-    inputColorChange(linearSpline: LinearSpline, event: Event) {
+    inputColorChange(event: Event) {
         console.log(`${Utility.timestamp()} input change. lastColorPoint is ${this.lastColorPoint}`)
         const point = this.pointsMap.get(this.lastColorPoint!.element.dataset.pointId!)!;
         const index = this.points.indexOf(point);
         const value = new Color((event.target as HTMLInputElement).value);
-        linearSpline._points[index][1] = value;
+        this.linearSpline._points[index][1] = value;
 
         // TODO: color the point and fill gradient
         //this.fillArea!.setAttribute("d", `${this.buildPathString()}`);
 
     }
 
-    splineToDom(linearSpline: LinearSpline): Array<{ cx: number, cy: number }> {
+    splineToDom(): Array<{ cx: number, cy: number }> {
         const domValues = new Array();
-        for (let i = 0; i < linearSpline._points.length; i++) {
-            const t = linearSpline._points[i][0];
-            const value = linearSpline._points[i][1];
+        for (let i = 0; i < this.linearSpline._points.length; i++) {
+            const t = this.linearSpline._points[i][0];
+            const value = this.linearSpline._points[i][1];
             const cx = this.LEFT + t * this.AVAILABLE_WIDTH;
             let cy;
             if (value instanceof Color) {
@@ -185,7 +186,7 @@ export class CurveEditor {
         return value;
     }
 
-    pointerMove(event: PointerEvent, linearSpline: LinearSpline) {
+    pointerMove(event: PointerEvent) {
         const point = this.pointsMap.get(this.currentPoint!.element.dataset.pointId!)!;
         const index = this.points.indexOf(point);
         let xBetweenPoints = true;
@@ -207,18 +208,18 @@ export class CurveEditor {
         if (!this.currentPoint!.lockX && xBetweenPoints) {
             this.currentPoint!.element.setAttribute("cx", event.offsetX.toString());
             const t = this.xDomToSpline(event.offsetX);
-            linearSpline._points[index][0] = t;
+            this.linearSpline._points[index][0] = t;
             //console.log(`${Utility.timestamp()} set t to ${t}`);
         }
         if (!this.currentPoint!.lockY && event.offsetY > this.POINT_RADIUS && event.offsetY < this.HEIGHT - this.POINT_RADIUS) {
             this.currentPoint!.element.setAttribute("cy", event.offsetY.toString());
             const value = this.yDomToSpline(event.offsetY);
-            linearSpline._points[index][1] = value;
+            this.linearSpline._points[index][1] = value;
             //console.log(`${Utility.timestamp()} set value to ${value}`);
         }
     }
 
-    insertPoint(event: PointerEvent, linearSpline: LinearSpline): Point {
+    insertPoint(event: PointerEvent): Point {
         // Add a new point        
         const point = this.makePoint(event.offsetX, event.offsetY, false, this.isColor);
         for (let i = 1; i < this.points.length; i++) {
@@ -228,7 +229,7 @@ export class CurveEditor {
                 this.points.splice(i, 0, point);
                 const _cx = this.xDomToSpline(parseFloat(point.element.getAttribute("cx")!));
                 const _cy = this.yDomToSpline(parseFloat(point.element.getAttribute("cy")!));
-                linearSpline._points.splice(i, 0, [_cx, _cy]);
+                this.linearSpline._points.splice(i, 0, [_cx, _cy]);
                 break;
             }
         }

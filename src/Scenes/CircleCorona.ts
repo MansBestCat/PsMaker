@@ -68,16 +68,16 @@ export class CircleCorona {
             event.stopPropagation();
         }
         const psCorona = this.particleSystem as Corona;
-        const ceEmitRate = new CurveEditor();
-        ceEmitRate.makeCurveEditor(gui, psCorona.emitRateSpline!, "Emission rate");
-        const ceAlpha = new CurveEditor();
-        ceAlpha.makeCurveEditor(gui, psCorona.alphaSpline, "Alpha");
-        const ceSize = new CurveEditor();
-        ceSize.makeCurveEditor(gui, psCorona.sizeSpline, "Size");
-        const ceVelocity = new CurveEditor();
-        ceVelocity.makeCurveEditor(gui, psCorona.velocitySpline, "Velocity");
-        const ceColor = new CurveEditor();
-        ceColor.makeCurveEditor(gui, psCorona.colorSpline, "Color");
+        const ceEmitRate = new CurveEditor(gui, psCorona.emitRateSpline!);
+        ceEmitRate.makeCurveEditor("Emission rate");
+        const ceAlpha = new CurveEditor(gui, psCorona.alphaSpline);
+        ceAlpha.makeCurveEditor("Alpha");
+        const ceSize = new CurveEditor(gui, psCorona.sizeSpline);
+        ceSize.makeCurveEditor("Size");
+        const ceVelocity = new CurveEditor(gui, psCorona.velocitySpline);
+        ceVelocity.makeCurveEditor("Velocity");
+        const ceColor = new CurveEditor(gui, psCorona.colorSpline);
+        ceColor.makeCurveEditor("Color");
         gui.add(this.particleSystem, "maxParticleLife", 0, 2000);
 
         // const shaderMat = new CylinderRingsMaterial().clone();
