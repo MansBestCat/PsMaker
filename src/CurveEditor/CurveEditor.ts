@@ -106,7 +106,7 @@ export class CurveEditor {
         }
 
         // Iterate the points to draw a shape connecting them
-        this.fillArea = this.connectPoints();
+        this.fillArea = this.makeFillElement();
         svg.append(this.fillArea);
 
         // Put points into dom last so they'll be on top
@@ -264,11 +264,11 @@ export class CurveEditor {
         return point;
     }
 
-    connectPoints(): HTMLElement {
-        const fillArea = document.createElementNS(this.SVGNS, "path") as HTMLElement;
-        fillArea.setAttribute("fill", "white");
-        fillArea.setAttribute("d", `${this.buildPathString()}`);
-        return fillArea;
+    makeFillElement(): HTMLElement {
+        const element = document.createElementNS(this.SVGNS, "path") as HTMLElement;
+        element.setAttribute("fill", "white");
+        element.setAttribute("d", `${this.buildPathString()}`);
+        return element;
     }
 
     buildPathString(): string {
