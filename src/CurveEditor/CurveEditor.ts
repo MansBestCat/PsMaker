@@ -238,7 +238,13 @@ export class CurveEditor {
                 const t = this.xDomToSpline(parseFloat(point.element.getAttribute("cx")!));
                 const value = this.isColor ? new Color : this.yDomToSpline(parseFloat(point.element.getAttribute("cy")!));
                 this.linearSpline._points.splice(i, 0, [t, value]);
+                if (!this.isColor) {
+                    break;
+                }
                 this.colorStops?.splice(i, 0, document.createElementNS(this.SVGNS, 'stop'));
+                const gradient = document.getElementById("Gradient")!;
+                gradient.innerHTML = "";
+                gradient.append(...this.colorStops!);
                 break;
             }
         }
