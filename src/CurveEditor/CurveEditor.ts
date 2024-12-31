@@ -270,9 +270,15 @@ export class CurveEditor {
             this.currentPoint = this.pointsMap.get(element.dataset.pointId!);
             if (this.isColor) {
                 this.lastColorPoint = this.currentPoint;
+            }
+        }
+
+        point.onclick = () => {
+            if (this.isColor) {
                 this.inputColor?.showPicker();
             }
         }
+
         return point;
     }
 
