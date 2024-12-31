@@ -51,7 +51,7 @@ export class CurveEditor {
         const svg = document.createElementNS(this.SVGNS, "svg") as HTMLElement;
         svg.setAttribute("width", this.WIDTH + "px");
         svg.setAttribute("height", this.HEIGHT + "px");
-        svg.style.border = "2px solid red";
+        svg.style.border = "1px solid grey";
 
         svg.onpointerdown = (event: PointerEvent) => {
             event.stopPropagation();
