@@ -274,9 +274,14 @@ export class CurveEditor {
         }
 
         point.onclick = () => {
-            if (this.isColor) {
-                this.inputColor?.showPicker();
+            if (!this.isColor) {
+                return
             }
+            const point = this.pointsMap.get(this.lastColorPoint!.element.dataset.pointId!)!;
+            const index = this.points.indexOf(point);
+            const hexString = this.linearSpline._points[index][1].getHexString();
+            this.inputColor!.value = "#" + hexString;
+            this.inputColor?.showPicker();
         }
 
         return point;
