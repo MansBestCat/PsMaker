@@ -152,19 +152,5 @@ export class SmokePuff extends ParticleSystemBase {
             p.life < p.maxLife
         );
         console.log(`${Utility.timestamp()} ${this.particles.length}`);
-        // this.particles.sort((a, b) => {
-        //     const d1 = this._camera.position.distanceTo(a.position);
-        //     const d2 = this._camera.position.distanceTo(b.position);
-
-        //     if (d1 > d2) {
-        //         return -1;
-        //     }
-
-        //     if (d1 < d2) {
-        //         return 1;
-        //     }
-
-        //     return 0;
-        // });
     }
 }

@@ -125,4 +125,21 @@ export abstract class ParticleSystemBase {
         this.geometry.attributes.angle.needsUpdate = true;
     }
 
+    sort() {
+        // console.log(`${Utility.timestamp()} ${this.particles.length}`);
+        // this.particles.sort((a, b) => {
+        //     const d1 = this.data.cameraManMain.position.distanceTo(a.position);
+        //     const d2 = this._camera.position.distanceTo(b.position);
+
+        //     if (d1 > d2) {
+        //         return -1;
+        //     }
+
+        //     if (d1 < d2) {
+        //         return 1;
+        //     }
+
+        //     return 0;
+        // });
+    }
 }

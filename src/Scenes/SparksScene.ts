@@ -6,8 +6,9 @@ import { Utility } from "../Utilitites/Utility";
 import GUI from "lil-gui";
 import { Corona } from "../ParticleSystems/Corona";
 import { CurveEditor } from "../CurveEditor/CurveEditor";
+import { SparkFountain } from "../ParticleSystems/Sparks";
 
-export class CircleCorona {
+export class SparksScene {
     SVGNS = "http://www.w3.org/2000/svg";
 
     particleSystem!: ParticleSystemBase;
@@ -45,20 +46,15 @@ export class CircleCorona {
         data.camera.position.set(0, 7, -12);
         data.camera?.lookAt(0, 2, 0);
 
-        // sphere
-        const sphere = new Mesh(new SphereGeometry(2), new MeshPhongMaterial({ color: new Color(0x0000ff) }));
-        data.scene.add(sphere);
-        sphere.position.copy(data.camera.position.clone().multiplyScalar(0.33));
-
         // Ground
-        // const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xeeeeee) }));
-        // data.scene.add(ground);
+        const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xeeeeee) }));
+        data.scene.add(ground);
 
-        this.particleSystem = new Corona({
+        this.particleSystem = new SparkFountain({
             parent: data.scene, maxEmitterLife: undefined,
             frequency: 128 // every 8th tick
         }, data);
-        (this.particleSystem as Corona).init();
+        //(this.particleSystem as SparkFountain).init();
 
         // Gui needs to be defined after the ps is instantiated
         // Because curve editors need to have access to the linear splines inside the ps object
@@ -67,16 +63,12 @@ export class CircleCorona {
             // Prevent pointer events on the gui from interfering with orbital camera
             event.stopPropagation();
         }
-        const psCorona = this.particleSystem as Corona;
-        const ceEmitRate = new CurveEditor(gui, psCorona.emitRateSpline!);
+        const ps = this.particleSystem as SparkFountain;
+        const ceEmitRate = new CurveEditor(gui, ps.emitRateSpline);
         ceEmitRate.makeCurveEditor("Emission rate");
-        const ceAlpha = new CurveEditor(gui, psCorona.alphaSpline);
+        const ceAlpha = new CurveEditor(gui, ps.alphaSpline);
         ceAlpha.makeCurveEditor("Alpha");
-        const ceSize = new CurveEditor(gui, psCorona.sizeSpline);
-        ceSize.makeCurveEditor("Size");
-        const ceVelocity = new CurveEditor(gui, psCorona.velocitySpline);
-        ceVelocity.makeCurveEditor("Velocity");
-        const ceColor = new CurveEditor(gui, psCorona.colorSpline);
+        const ceColor = new CurveEditor(gui, ps.colorSpline);
         ceColor.makeCurveEditor("Color");
         gui.add(this.particleSystem, "maxParticleLife", 0, 2000);
 

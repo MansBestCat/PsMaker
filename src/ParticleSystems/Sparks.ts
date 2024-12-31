@@ -2,7 +2,7 @@ import { Vector3, Color, AdditiveBlending, ShaderMaterial, TextureLoader, Points
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
-
+import { Data } from "../Data";
 
 
 const _VS = `
@@ -33,10 +33,10 @@ export class SparkFountain extends ParticleSystemBase {
 
     alphaSpline: LinearSpline;
     colorSpline: LinearSplineOut;
+    emitRateSpline: LinearSpline;
 
-    freqCounter = 0;
+    constructor(params: any, public data: Data) {
 
-    constructor(params: any) {
         super(params);
 
         const uniforms = {};
@@ -71,6 +71,13 @@ export class SparkFountain extends ParticleSystemBase {
         });
         this.colorSpline.addPoint(0.0, new Color(0xFFFF80));
         this.colorSpline.addPoint(1.0, new Color(0xFF8080));
+
+        this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
+            return a + t * (b - a);
+        });
+        this.emitRateSpline.addPoint(0.0, 10.0);
+        this.emitRateSpline.addPoint(0.1, 2.0);
+        this.emitRateSpline.addPoint(1.0, 0);
 
         this.updateGeometry();
     }

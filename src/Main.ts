@@ -1,7 +1,9 @@
 import { Data } from './Data';
 import { CameraManMain } from './Camera/CameraManMain';
 import { GameEngine } from './GameEngine';
-import { CircleCorona } from './Scenes/CircleCorona';
+import { CoronaScene } from './Scenes/CoronaScene';
+import { SmokePuffScene } from './Scenes/SmokePuffScene';
+import { SparksScene } from './Scenes/SparksScene';
 
 // MAIN 
 console.clear();
@@ -16,8 +18,14 @@ window.addEventListener('DOMContentLoaded', () => {
   gameEngine.init();
 
   switch (window.location.hash.substring(1)) {
-    case "CircleCorona":
-      new CircleCorona(data).go(data, cameraManMain);
+    case "SmokePuff":
+      new SmokePuffScene().go(data, cameraManMain);
+      break;
+    case "Sparks":
+      new SparksScene().go(data, cameraManMain);
+      break;
+    case "Corona":
+      new CoronaScene().go(data, cameraManMain);
       break;
   }
 });
