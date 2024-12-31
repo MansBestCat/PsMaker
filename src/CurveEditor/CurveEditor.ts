@@ -227,8 +227,9 @@ export class CurveEditor {
     }
 
     insertPoint(event: PointerEvent): Point {
-        // Add a new point        
-        const point = this.makePoint(event.offsetX, event.offsetY, false, this.isColor);
+        // Add a new point
+        const y = this.isColor ? this.POINT_RADIUS : event.offsetY;
+        const point = this.makePoint(event.offsetX, y, false, this.isColor);
         for (let i = 1; i < this.points.length; i++) {
             const cx = parseFloat(this.points[i].element.getAttribute("cx")!);
             if (cx > event.offsetX) {
@@ -237,6 +238,7 @@ export class CurveEditor {
                 const t = this.xDomToSpline(parseFloat(point.element.getAttribute("cx")!));
                 const value = this.isColor ? new Color : this.yDomToSpline(parseFloat(point.element.getAttribute("cy")!));
                 this.linearSpline._points.splice(i, 0, [t, value]);
+                this.colorStops?.splice(i, 0, document.createElementNS(this.SVGNS, 'stop'));
                 break;
             }
         }
