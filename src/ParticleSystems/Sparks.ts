@@ -11,6 +11,7 @@ attribute float size;
 attribute float angle;
 attribute vec4 colour;
 
+varying vec4 vColour;
 
 void main() {
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
@@ -18,13 +19,15 @@ void main() {
   gl_Position = projectionMatrix * mvPosition;
   gl_PointSize = size  / gl_Position.w;
 
+  vColour = colour;
 }`;
 
 const _FS = `
 
+varying vec4 vColour;
 
 void main() {
-  gl_FragColor = vec4(1.0,1.0,1.0,1.0);
+  gl_FragColor = vec4(vColour);
 }`;
 
 export class SparkFountain extends ParticleSystemBase {
