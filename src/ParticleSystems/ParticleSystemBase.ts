@@ -1,4 +1,4 @@
-import { BufferGeometry, ShaderMaterial, AdditiveBlending, Points, Vector3, PerspectiveCamera, TextureLoader, Color, Float32BufferAttribute, Material } from "three";
+import { BufferGeometry, Color, Float32BufferAttribute, Material, Points, ShaderMaterial, Vector3 } from "three";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { Utility } from "../Utilitites/Utility";
 

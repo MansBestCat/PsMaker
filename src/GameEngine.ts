@@ -1,4 +1,4 @@
-import { Clock, HalfFloatType, WebGLRenderer } from "three";
+import { Clock, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { CameraManMain } from "./Camera/CameraManMain";
 import { Data } from "./Data";

@@ -1,7 +1,7 @@
 import GUI, { FunctionController } from "lil-gui";
-import { Utility } from "../Utilitites/Utility";
-import { LinearSpline } from "../Utilitites/LinearSpline";
 import { Color } from "three";
+import { LinearSpline } from "../Utilitites/LinearSpline";
+import { Utility } from "../Utilitites/Utility";
 
 type PointId = string;
 

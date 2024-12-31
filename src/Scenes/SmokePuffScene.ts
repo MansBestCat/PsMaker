@@ -1,11 +1,11 @@
-import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, MeshPhongMaterial, SphereGeometry, Vector3 } from "three";
+import GUI from "lil-gui";
+import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshPhongMaterial, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
+import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { Data } from "../Data";
 import { ParticleSystemBase } from "../ParticleSystems/ParticleSystemBase";
-import { Utility } from "../Utilitites/Utility";
-import GUI from "lil-gui";
-import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { SmokePuff } from "../ParticleSystems/SmokePuff";
+import { Utility } from "../Utilitites/Utility";
 
 export class SmokePuffScene {
     SVGNS = "http://www.w3.org/2000/svg";

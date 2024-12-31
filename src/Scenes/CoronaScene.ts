@@ -1,11 +1,11 @@
-import { AmbientLight, BoxGeometry, CircleGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, MeshPhongMaterial, SphereGeometry, Vector3 } from "three";
+import GUI from "lil-gui";
+import { AmbientLight, Color, DirectionalLight, Mesh, MeshPhongMaterial, SphereGeometry, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
+import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { Data } from "../Data";
+import { Corona } from "../ParticleSystems/Corona";
 import { ParticleSystemBase } from "../ParticleSystems/ParticleSystemBase";
 import { Utility } from "../Utilitites/Utility";
-import GUI from "lil-gui";
-import { Corona } from "../ParticleSystems/Corona";
-import { CurveEditor } from "../CurveEditor/CurveEditor";
 
 export class CoronaScene {
     SVGNS = "http://www.w3.org/2000/svg";

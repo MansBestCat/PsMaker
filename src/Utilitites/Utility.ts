@@ -1,5 +1,5 @@
 
-import { BufferGeometry, Mesh, Object3D, Quaternion, Vector2, Vector3 } from "three";
+import { Object3D, Quaternion, Vector2, Vector3 } from "three";
 
 export class Utility {
     static ROUND_PRECISION = 4; // 4 decimal places;

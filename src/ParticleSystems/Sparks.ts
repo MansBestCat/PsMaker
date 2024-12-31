@@ -1,8 +1,8 @@
-import { Vector3, Color, AdditiveBlending, ShaderMaterial, TextureLoader, Points } from "three";
-import { LinearSpline } from "../Utilitites/LinearSpline";
-import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
-import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
+import { AdditiveBlending, Color, Points, ShaderMaterial, Vector3 } from "three";
 import { Data } from "../Data";
+import { LinearSpline } from "../Utilitites/LinearSpline";
+import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
+import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
 
 
 const _VS = `

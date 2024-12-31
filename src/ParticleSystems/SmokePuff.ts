@@ -1,10 +1,9 @@
-import { Vector3, Color, ShaderMaterial, TextureLoader, Points, NormalBlending, Texture } from "three";
-import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
+import { Color, NormalBlending, Points, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
+import { Data } from "../Data";
+import { LinearSpline } from "../Utilitites/LinearSpline";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
 import { Utility } from "../Utilitites/Utility";
-import { LinearSpline } from "../Utilitites/LinearSpline";
-import { Data } from "../Data";
-import { Etype } from "../Entities/Etype";
+import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
 
 
 

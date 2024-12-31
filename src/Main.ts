@@ -1,5 +1,5 @@
-import { Data } from './Data';
 import { CameraManMain } from './Camera/CameraManMain';
+import { Data } from './Data';
 import { GameEngine } from './GameEngine';
 import { CoronaScene } from './Scenes/CoronaScene';
 import { SmokePuffScene } from './Scenes/SmokePuffScene';
