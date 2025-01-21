@@ -20,7 +20,8 @@
     "webpack-dev-server": "^4.9.1"
   },
   "scripts": {
-    "webpackDev": "webpack serve --config webpack.development.cjs"
+    "webpackDev": "webpack serve --config webpack.development.cjs",
+    "buildForItch": "webpack --config webpack.development.cjs"
   },
   "author": "mansbestcat"
 }
