@@ -29,7 +29,7 @@ module.exports = {
         static: {
             directory: path.join(__dirname, 'dist'),
         },
-        host: 'www.dev.duskminer.com',
+        host: 'localhost',
         port: 80,
         hot: false,
         client: {

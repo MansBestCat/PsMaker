@@ -8,7 +8,7 @@
             "name": "Browse webpack dev server",
             "request": "launch",
             "type": "chrome",
-            "url": "http://www.dev.duskminer.com",
+            "url": "http://localhost",
             "webRoot": "${workspaceFolder}"
         }
     ]
