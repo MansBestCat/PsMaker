@@ -4,6 +4,7 @@ import { GameEngine } from './GameEngine';
 import { CoronaScene } from './Scenes/CoronaScene';
 import { SmokePuffScene } from './Scenes/SmokePuffScene';
 import { SparksScene } from './Scenes/SparksScene';
+import { TwinkleStarsScene } from './Scenes/TwinkleStarsScene';
 
 // MAIN 
 console.clear();
@@ -26,6 +27,9 @@ window.addEventListener('DOMContentLoaded', () => {
       break;
     case "Corona":
       new CoronaScene().go(data, cameraManMain);
+      break;
+    case "TwinkleStars":
+      new TwinkleStarsScene().go(data, cameraManMain);
       break;
   }
 });
