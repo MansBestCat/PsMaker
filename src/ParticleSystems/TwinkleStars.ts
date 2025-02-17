@@ -53,7 +53,7 @@ export class TwinkleStars extends ParticleSystemBase {
             depthWrite: false,
             transparent: true,
             vertexColors: true,
-            name: "spark fountain"
+            name: "twinkle stars"
         });
 
         this.points = new Points(this.geometry, this.material);

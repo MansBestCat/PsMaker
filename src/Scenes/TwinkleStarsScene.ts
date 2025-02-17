@@ -4,7 +4,7 @@ import { CameraManMain } from "../Camera/CameraManMain";
 import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { Data } from "../Data";
 import { ParticleSystemBase } from "../ParticleSystems/ParticleSystemBase";
-import { SparkFountain } from "../ParticleSystems/Sparks";
+import { TwinkleStars } from "../ParticleSystems/TwinkleStars";
 import { Utility } from "../Utilitites/Utility";
 
 export class TwinkleStarsScene {
@@ -49,11 +49,11 @@ export class TwinkleStarsScene {
         const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xeeeeee) }));
         data.scene.add(ground);
 
-        this.particleSystem = new SparkFountain({
+        this.particleSystem = new TwinkleStars({
             parent: data.scene, maxEmitterLife: undefined,
             frequency: 128 // every 8th tick
         }, data);
-        //(this.particleSystem as SparkFountain).init();
+        //(this.particleSystem as TwinkleStars).init();
 
         // Gui needs to be defined after the ps is instantiated
         // Because curve editors need to have access to the linear splines inside the ps object
@@ -62,7 +62,7 @@ export class TwinkleStarsScene {
             // Prevent pointer events on the gui from interfering with orbital camera
             event.stopPropagation();
         }
-        const ps = this.particleSystem as SparkFountain;
+        const ps = this.particleSystem as TwinkleStars;
         const ceEmitRate = new CurveEditor(gui, ps.emitRateSpline);
         ceEmitRate.makeCurveEditor("Emission rate");
         const ceAlpha = new CurveEditor(gui, ps.alphaSpline);
