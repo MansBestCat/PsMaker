@@ -39,8 +39,8 @@ export class TwinkleStarsScene {
         data.scene.add(ambientlight);
 
         // camera
-        data.camera.position.set(0, 7, -12);
-        data.camera?.lookAt(0, 2, 0);
+        data.camera.position.set(0, 1.5, -3);
+        data.camera?.lookAt(0, 0.5, 0);
 
         // Ground
         const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshBasicMaterial({ color: new Color(0xff0000) }));
@@ -57,8 +57,9 @@ export class TwinkleStarsScene {
         });
 
         // mount the ps to a box
-        const material = new MeshBasicMaterial({ name: "transparent" });
+        const material = new MeshBasicMaterial({ name: "transparent", color: new Color(0x00ff00), transparent: true, opacity: 0.5 });
         const box = new Mesh(new BoxGeometry(1, 1, 1), material);
+        box.position.set(0, 0.5, 0);
         box.add(this.particleSystem.points);
         data.scene.add(box);
 
