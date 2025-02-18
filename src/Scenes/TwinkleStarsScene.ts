@@ -3,14 +3,13 @@ import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshPhongMate
 import { CameraManMain } from "../Camera/CameraManMain";
 import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { Data } from "../Data";
-import { ParticleSystemBase } from "../ParticleSystems/ParticleSystemBase";
 import { TwinkleStars } from "../ParticleSystems/TwinkleStars";
 import { Utility } from "../Utilitites/Utility";
 
 export class TwinkleStarsScene {
     SVGNS = "http://www.w3.org/2000/svg";
 
-    particleSystem!: ParticleSystemBase;
+    particleSystem!: TwinkleStars;
 
     timeLast = Date.now();
 
