@@ -63,8 +63,6 @@ export class TwinkleStarsScene {
             event.stopPropagation();
         }
         const ps = this.particleSystem as TwinkleStars;
-        const ceEmitRate = new CurveEditor(gui, ps.emitRateSpline);
-        ceEmitRate.makeCurveEditor("Emission rate");
         const ceAlpha = new CurveEditor(gui, ps.alphaSpline);
         ceAlpha.makeCurveEditor("Alpha");
         const ceColor = new CurveEditor(gui, ps.colorSpline);

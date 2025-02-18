@@ -31,12 +31,9 @@ void main() {
 }`;
 
 export class TwinkleStars extends ParticleSystemBase {
-    maxParticleLife = 1000; // ms
-    initialVelocity = 15;
 
     alphaSpline: LinearSpline;
     colorSpline: LinearSplineOut;
-    emitRateSpline: LinearSpline;
 
     constructor(params: any, public data: Data) {
 
@@ -73,13 +70,10 @@ export class TwinkleStars extends ParticleSystemBase {
         this.colorSpline.addPoint(0.0, new Color(0xFFFF80));
         this.colorSpline.addPoint(1.0, new Color(0xFF8080));
 
-        this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
-            return a + t * (b - a);
-        });
-        this.emitRateSpline.addPoint(0.0, 10.0);
-        this.emitRateSpline.addPoint(0.1, 2.0);
-        this.emitRateSpline.addPoint(1.0, 0);
-
+        this.updateGeometry();
+    }
+    tick(timeElapsed: number) {
+        this.updateParticles(timeElapsed);
         this.updateGeometry();
     }
 
@@ -89,7 +83,6 @@ export class TwinkleStars extends ParticleSystemBase {
         particle.size = 1;
         particle.colour = new Color();
         particle.alpha = this.alphaSpline.get(0);
-        particle.maxLife = Math.random() * this.maxParticleLife;
         particle.life = 0;
         particle.rotation = Math.random() * 2.0 * Math.PI;
         particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
@@ -111,8 +104,5 @@ export class TwinkleStars extends ParticleSystemBase {
             p.position.y = Math.abs(Math.sin(distance)) * (1 - t);
         });
 
-        this.particles = this.particles.filter(p =>
-            p.life < p.maxLife
-        );
     }
 }
