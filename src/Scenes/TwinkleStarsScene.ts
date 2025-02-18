@@ -53,6 +53,7 @@ export class TwinkleStarsScene {
             maxEmitterLife: undefined,
             frequency: 128 // every 8th tick
         }, data);
+        this.particleSystem.init();
         data.scene.add(this.particleSystem.points);
 
         // Gui needs to be defined after the ps is instantiated

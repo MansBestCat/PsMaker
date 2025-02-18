@@ -72,6 +72,14 @@ export class TwinkleStars extends ParticleSystemBase {
 
         this.updateGeometry();
     }
+
+    init() {
+        const N_STARS = 322;
+        for (let i = 0; i < N_STARS; i++) {
+            this.addParticle();
+        }
+    }
+
     tick(timeElapsed: number) {
         this.updateParticles(timeElapsed);
         this.updateGeometry();
