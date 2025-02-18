@@ -1,4 +1,4 @@
-import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, Vector3 } from "three";
+import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, Vector2, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
 import { Data } from "../Data";
 import { TwinkleStars } from "../ParticleSystems/TwinkleStars";
@@ -52,13 +52,25 @@ export class TwinkleStarsScene {
             frequency: 128 // every 8th tick
         }, data);
         this.particleSystem.init();
+
+        const bounds = [new Vector2(-0.5, -0.5), new Vector2(0.0, 0.5), new Vector2(0.5, -0.5)];
+        const test = new Vector2();
+        let x: number, y: number;
         this.particleSystem.particles.forEach(p => {
-            const x = Math.random() - 0.5;
-            const y = Math.random() - 0.5;
-            const z = -0.5;
-            const vPos = new Vector3(x, y, z);
-            vPos.applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
-            p.position.copy(vPos);
+
+            // Determine a point on the front face
+            do {
+                x = Math.random() - 0.5;
+                y = Math.random() - 0.5;
+                test.set(x, y);
+            } while (!Utility.isPointInPolygon(test, bounds));
+
+            // Rotate the point to lie on another face
+            const point = new Vector3(x, y, -0.5);
+            point.applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
+
+            // Assign the position
+            p.position.copy(point);
         });
 
         // mount the ps to a box
