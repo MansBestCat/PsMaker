@@ -56,7 +56,9 @@ export class TwinkleStarsScene {
             const x = Math.random() - 0.5;
             const y = Math.random() - 0.5;
             const z = -0.5;
-            p.position.set(x, y, z);
+            const vPos = new Vector3(x, y, z);
+            vPos.applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
+            p.position.copy(vPos);
         });
 
         // mount the ps to a box
