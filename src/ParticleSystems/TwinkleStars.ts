@@ -86,8 +86,9 @@ export class TwinkleStars extends ParticleSystemBase {
 
         // Make a shared noise array for the ps
         const noise2D = createNoise2D();
+        const i = Math.random();
         for (let j = 0; j < 1; j += 0.00015) { // 15000 ms
-            this.noise.push(noise2D(Math.random(), j));
+            this.noise.push(noise2D(i, j));
         }
     }
 
