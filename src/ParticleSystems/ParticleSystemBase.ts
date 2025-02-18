@@ -113,7 +113,7 @@ export abstract class ParticleSystemBase {
             positions.push(p.position.x, p.position.y, p.position.z);
             colours.push(p.colour.r, p.colour.g, p.colour.b, p.alpha);
             sizes.push(p.size);
-            angles.push(p.rotation);
+            angles.push(0); // FIXME:
         }
 
         this.geometry.setAttribute(

@@ -108,8 +108,11 @@ export class TwinkleStars extends ParticleSystemBase {
         const color = new Color();
         (this.particles as Array<ParticleNoise>).forEach(p => {
             p.life += timeElapsed;
+            if (p.life > p.noise.length) {
+                p.life = p.life - p.noise.length;
+            }
             p.alpha = p.noise[p.life];
-            //p.colour.copy(this.colorSpline.getResult(t, color));
+             //p.colour.copy(this.colorSpline.getResult(t, color));
         });
 
     }
