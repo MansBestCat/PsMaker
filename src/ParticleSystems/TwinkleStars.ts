@@ -74,13 +74,13 @@ export class TwinkleStars extends ParticleSystemBase {
     }
 
     init() {
-        const N_STARS = 322;
+        const N_STARS = 32;
         const noise2D = createNoise2D();
 
         for (let i = 0; i < N_STARS; i++) {
             const particle = this.makeParticle() as ParticleNoise;
 
-            for (let j = 0; j < 600; j++) {
+            for (let j = 0; j < 10; j += 0.00015) {
                 particle.noise.push(noise2D(i, j));
             }
             this.particles.push(particle);
@@ -112,7 +112,7 @@ export class TwinkleStars extends ParticleSystemBase {
                 p.life = p.life - p.noise.length;
             }
             p.alpha = p.noise[p.life];
-             //p.colour.copy(this.colorSpline.getResult(t, color));
+            //p.colour.copy(this.colorSpline.getResult(t, color));
         });
 
     }
