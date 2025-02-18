@@ -53,7 +53,10 @@ export class TwinkleStarsScene {
         }, data);
         this.particleSystem.init();
         this.particleSystem.particles.forEach(p => {
-            p.position.random();
+            const x = Math.random() - 0.5;
+            const y = Math.random() - 0.5;
+            const z = -0.5;
+            p.position.set(x, y, z);
         });
 
         // mount the ps to a box
