@@ -1,9 +1,9 @@
+import { createNoise2D } from 'simplex-noise';
 import { AdditiveBlending, Color, Points, ShaderMaterial, Vector3 } from "three";
 import { Data } from "../Data";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
 import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
-
 
 const _VS = `
 
@@ -78,6 +78,11 @@ export class TwinkleStars extends ParticleSystemBase {
         for (let i = 0; i < N_STARS; i++) {
             this.addParticle();
         }
+
+        // initialize the noise function
+        const noise2D = createNoise2D();
+        // returns a value between -1 and 1
+        console.log(noise2D(0.2, 0.3));
     }
 
     tick(timeElapsed: number) {
