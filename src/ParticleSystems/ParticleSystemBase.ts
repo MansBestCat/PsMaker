@@ -57,7 +57,7 @@ export abstract class ParticleSystemBase {
         this.updateGeometry();
     }
 
-    abstract addParticle(): void;
+    abstract makeParticle(): Particle;
     abstract updateParticles(timeElapsed: number): void;
 
     addParticlesGate(timeElapsed: number) {
@@ -77,7 +77,8 @@ export abstract class ParticleSystemBase {
         // Determine how many particles to add
         const numParticles = this.numParticles();
         for (let i = 0; i < numParticles; i++) {
-            this.addParticle();
+            const particle = this.makeParticle();
+            this.particles.push(particle);
         }
         //console.log(`${Utility.timestamp()} in addParticlesGate, adding ${numParticles}`);
     }

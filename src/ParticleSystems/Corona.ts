@@ -118,7 +118,7 @@ export class Corona extends ParticleSystemBase {
         });
     }
 
-    addParticle() {
+    makeParticle() {
         const particle = new Particle();
         particle.size = 1.0;
         particle.position = new Vector3(0, 0, 0);
@@ -129,7 +129,7 @@ export class Corona extends ParticleSystemBase {
         particle.rotation = Math.random() * 2.0 * Math.PI;
         particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation));
 
-        this.particles.push(particle);
+        return particle;
     }
 
     updateParticles(timeElapsed: number): void {

@@ -83,7 +83,7 @@ export class SparkFountain extends ParticleSystemBase {
         this.updateGeometry();
     }
 
-    addParticle(): void {
+    makeParticle() {
         const particle = new Particle();
         particle.position = new Vector3(0, 0, 0);
         particle.size = 1;
@@ -94,7 +94,7 @@ export class SparkFountain extends ParticleSystemBase {
         particle.rotation = Math.random() * 2.0 * Math.PI;
         particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
 
-        this.particles.push(particle);
+        return particle;
     }
 
     updateParticles(timeElapsed: number): void {
