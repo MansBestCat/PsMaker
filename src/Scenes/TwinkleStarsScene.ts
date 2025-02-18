@@ -1,7 +1,5 @@
-import GUI from "lil-gui";
-import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshPhongMaterial, Vector3 } from "three";
+import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
-import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { Data } from "../Data";
 import { TwinkleStars } from "../ParticleSystems/TwinkleStars";
 import { Utility } from "../Utilitites/Utility";
@@ -45,7 +43,7 @@ export class TwinkleStarsScene {
         data.camera?.lookAt(0, 2, 0);
 
         // Ground
-        const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xeeeeee) }));
+        const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshBasicMaterial({ color: new Color(0xff0000) }));
         data.scene.add(ground);
 
         this.particleSystem = new TwinkleStars({
@@ -58,19 +56,6 @@ export class TwinkleStarsScene {
             p.position.random();
         })
         data.scene.add(this.particleSystem.points);
-
-        // Gui needs to be defined after the ps is instantiated
-        // Because curve editors need to have access to the linear splines inside the ps object
-        const gui = new GUI();
-        gui.domElement.onpointermove = (event: PointerEvent) => {
-            // Prevent pointer events on the gui from interfering with orbital camera
-            event.stopPropagation();
-        }
-        const ps = this.particleSystem as TwinkleStars;
-        const ceAlpha = new CurveEditor(gui, ps.alphaSpline);
-        ceAlpha.makeCurveEditor("Alpha");
-        const ceColor = new CurveEditor(gui, ps.colorSpline);
-        ceColor.makeCurveEditor("Color");
 
         const orbitControls = cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
         orbitControls.addEventListener('change', () => {
