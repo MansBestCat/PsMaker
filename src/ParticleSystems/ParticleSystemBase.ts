@@ -28,7 +28,7 @@ export abstract class ParticleSystemBase {
     emitRateSpline?: LinearSpline;
 
     constructor(params: any) {
-        if (!params.parent || !params.frequency) {
+        if (!params.frequency) {
             throw new Error(`${Utility.timestamp()} Missing expected to param in ParticleSystemBase()`);
         }
         this.particles = [];

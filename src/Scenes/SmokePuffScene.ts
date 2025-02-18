@@ -50,10 +50,11 @@ export class SmokePuffScene {
         data.scene.add(ground);
 
         this.particleSystem = new SmokePuff({
-            parent: data.scene, maxEmitterLife: undefined,
+            maxEmitterLife: undefined,
             frequency: 128 // every 8th tick
         }, data);
         (this.particleSystem as SmokePuff).init();
+        data.scene.add(this.particleSystem.points);
 
         // Gui needs to be defined after the ps is instantiated
         // Because curve editors need to have access to the linear splines inside the ps object

@@ -74,8 +74,6 @@ export class Corona extends ParticleSystemBase {
 
         this.points = new Points(this.geometry, this.material);
 
-        params.parent.add(this.points);
-
         this.alphaSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
