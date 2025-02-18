@@ -53,6 +53,10 @@ export class TwinkleStarsScene {
             frequency: 128 // every 8th tick
         }, data);
         this.particleSystem.init();
+
+        this.particleSystem.particles.forEach(p => {
+            p.position.random();
+        })
         data.scene.add(this.particleSystem.points);
 
         // Gui needs to be defined after the ps is instantiated
@@ -67,7 +71,6 @@ export class TwinkleStarsScene {
         ceAlpha.makeCurveEditor("Alpha");
         const ceColor = new CurveEditor(gui, ps.colorSpline);
         ceColor.makeCurveEditor("Color");
-        gui.add(this.particleSystem, "maxParticleLife", 0, 2000);
 
         const orbitControls = cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
         orbitControls.addEventListener('change', () => {

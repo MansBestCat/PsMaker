@@ -1,9 +1,9 @@
-import { createNoise2D } from 'simplex-noise';
+import { createNoise2D } from "simplex-noise";
 import { AdditiveBlending, Color, Points, ShaderMaterial, Vector3 } from "three";
 import { Data } from "../Data";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
-import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
+import { ParticleNoise, ParticleSystemBase } from "./ParticleSystemBase";
 
 const _VS = `
 
@@ -75,15 +75,17 @@ export class TwinkleStars extends ParticleSystemBase {
 
     init() {
         const N_STARS = 322;
+        const noise2D = createNoise2D();
+
         for (let i = 0; i < N_STARS; i++) {
-            const particle = this.makeParticle();
+            const particle = this.makeParticle() as ParticleNoise;
+
+            for (let j = 0; j < 600; j++) {
+                particle.noise.push(noise2D(i, j));
+            }
             this.particles.push(particle);
         }
 
-        // initialize the noise function
-        const noise2D = createNoise2D();
-        // returns a value between -1 and 1
-        console.log(noise2D(0.2, 0.3));
     }
 
     tick(timeElapsed: number) {
@@ -92,30 +94,22 @@ export class TwinkleStars extends ParticleSystemBase {
     }
 
     makeParticle() {
-        const particle = new Particle();
+        const particle = new ParticleNoise();
         particle.position = new Vector3(0, 0, 0);
         particle.size = 1;
         particle.colour = new Color();
         particle.alpha = this.alphaSpline.get(0);
         particle.life = 0;
-        particle.rotation = Math.random() * 2.0 * Math.PI;
-        particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
 
         return particle;
     }
 
     updateParticles(timeElapsed: number): void {
         const color = new Color();
-        this.particles.forEach((p: Particle) => {
+        (this.particles as Array<ParticleNoise>).forEach(p => {
             p.life += timeElapsed;
-
-            const t = Math.min(p.life / p.maxLife, 1); // t range is 0 to 1
-
-            p.alpha = this.alphaSpline.get(t);
-            p.colour.copy(this.colorSpline.getResult(t, color));
-            p.position.add(p.velocity.clone().multiplyScalar(timeElapsed * 0.003));
-            const distance = p.position.length();
-            p.position.y = Math.abs(Math.sin(distance)) * (1 - t);
+            p.alpha = p.noise[p.life];
+            //p.colour.copy(this.colorSpline.getResult(t, color));
         });
 
     }
