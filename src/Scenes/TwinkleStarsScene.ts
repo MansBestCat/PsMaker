@@ -83,9 +83,9 @@ export class TwinkleStarsScene {
             this.animate()
         });
 
-        const timeElapsed = Date.now() - this.timeLast;
-        this.particleSystem.tick(timeElapsed);
-        this.timeLast = Date.now();
+        const timeNow = Date.now();
+        this.particleSystem.tick(timeNow - this.timeLast);
+        this.timeLast = timeNow;
 
     }
 }
