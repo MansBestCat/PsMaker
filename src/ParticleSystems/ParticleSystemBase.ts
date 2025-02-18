@@ -14,9 +14,9 @@ export class Particle {
     velocity!: Vector3;
 }
 
-/** This kind of particle follows its own internal noise sample instead of spline defined for the ps */
+/** This kind of particle follows a noise sample instead of spline */
 export class ParticleNoise extends Particle {
-    noise = new Array<number>;
+    strideScalar!: number;  //  [-1.0, 1.0]
 }
 
 export abstract class ParticleSystemBase {
