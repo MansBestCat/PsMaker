@@ -46,17 +46,23 @@ export class TwinkleStarsScene {
         const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshBasicMaterial({ color: new Color(0xff0000) }));
         data.scene.add(ground);
 
+        // The particle system
         this.particleSystem = new TwinkleStars({
             maxEmitterLife: undefined,
             frequency: 128 // every 8th tick
         }, data);
         this.particleSystem.init();
-
         this.particleSystem.particles.forEach(p => {
             p.position.random();
-        })
-        data.scene.add(this.particleSystem.points);
+        });
 
+        // mount the ps to a box
+        const material = new MeshBasicMaterial({ name: "transparent" });
+        const box = new Mesh(new BoxGeometry(1, 1, 1), material);
+        box.add(this.particleSystem.points);
+        data.scene.add(box);
+
+        // attach orbit controls
         const orbitControls = cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
         orbitControls.addEventListener('change', () => {
             this.particleSystem.points.lookAt(data.camera!.position);
