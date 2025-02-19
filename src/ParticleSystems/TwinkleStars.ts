@@ -3,7 +3,7 @@ import { AdditiveBlending, Color, Points, ShaderMaterial, Vector3 } from "three"
 import { Data } from "../Data";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
-import { ParticleNoise, ParticleSystemBase } from "./ParticleSystemBase";
+import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
 
 const _VS = `
 
@@ -103,23 +103,23 @@ export class TwinkleStars extends ParticleSystemBase {
     }
 
     makeParticle() {
-        const particle = new ParticleNoise();
+        const particle = new Particle();
         particle.position = new Vector3(0, 0, 0);
         particle.size = 30;
         particle.colour = new Color();
         particle.alpha = this.alphaSpline.get(0);
         particle.life = Math.round(Math.random() * 15);
-        particle.strideScalar = Math.random() * 2.0 - 1.0;
+        particle.tScalar = Math.random() * 2.0 - 1.0;
 
         return particle;
     }
 
     updateParticles(timeElapsed: number): void {
         const color = new Color();
-        (this.particles as Array<ParticleNoise>).forEach(p => {
+        this.particles.forEach(p => {
 
             // increment or decrement p.life according to scalar
-            p.life += Math.round(timeElapsed * p.strideScalar);
+            p.life += Math.round(timeElapsed * p.tScalar);
 
             // Wrap to clamp values between 0 and noise.length
             if (p.life > this.noise.length) {

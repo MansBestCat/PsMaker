@@ -12,12 +12,9 @@ export class Particle {
     colour!: Color;
     rotation!: number;
     velocity!: Vector3;
+    tScalar!: number; // optionally used to index a spline in a way to create a faster or slower animation
 }
 
-/** This kind of particle follows a noise sample instead of spline */
-export class ParticleNoise extends Particle {
-    strideScalar!: number;  //  [-1.0, 1.0]
-}
 
 export abstract class ParticleSystemBase {
     geometry: BufferGeometry;
