@@ -88,7 +88,7 @@ export class TwinkleStars extends ParticleSystemBase {
         const noise2D = createNoise2D();
         const i = Math.random();
         for (let j = 0; j < 1; j += 0.00015) { // 15000 ms
-            this.noise.push(Math.pow(noise2D(i, j), 3));
+            this.noise.push(Math.pow(noise2D(i, j) * 0.5 + 0.5, 3));
         }
         // After exponentiating values, re-normalize max to 1
         const max = Math.max(...this.noise);
