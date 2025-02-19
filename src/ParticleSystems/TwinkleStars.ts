@@ -77,7 +77,7 @@ export class TwinkleStars extends ParticleSystemBase {
     }
 
     init() {
-        const N_STARS = 32;
+        const N_STARS = 100;
 
         for (let i = 0; i < N_STARS; i++) {
             const particle = this.makeParticle();

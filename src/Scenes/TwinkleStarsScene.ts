@@ -1,4 +1,4 @@
-import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshBasicMaterial, Vector2, Vector3 } from "three";
+import { AmbientLight, BoxGeometry, Color, ConeGeometry, DirectionalLight, Mesh, MeshBasicMaterial, Vector2, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
 import { Data } from "../Data";
 import { TwinkleStars } from "../ParticleSystems/TwinkleStars";
@@ -53,7 +53,7 @@ export class TwinkleStarsScene {
         }, data);
         this.particleSystem.init();
 
-        const bounds = [new Vector2(-0.5, -0.5), new Vector2(0.0, 0.5), new Vector2(0.5, -0.5)];
+        const bounds = [new Vector2(-0.25, -0.5), new Vector2(0.0, 0.5), new Vector2(0.25, -0.5)];
         const test = new Vector2();
         let x: number, y: number;
         this.particleSystem.particles.forEach(p => {
@@ -69,15 +69,20 @@ export class TwinkleStarsScene {
             const point = new Vector3(x, y, -0.5);
             point
                 .applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2)
-                .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI / 4);
+                .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI / 8)
+                .add(new Vector3(0.25, -0.25, 0));
 
             // Assign the position
             p.position.copy(point);
         });
 
-        // mount the ps to a box
+        // mount the ps to a cone
+        const width = 1;
+        const geometry = new ConeGeometry(
+            width / 2, width, 4, 1, false, Math.PI / 4);
+
         const material = new MeshBasicMaterial({ name: "transparent", color: new Color(0x00ff00), transparent: true, opacity: 0.5 });
-        const box = new Mesh(new BoxGeometry(1, 1, 1), material);
+        const box = new Mesh(geometry, material);
         box.position.set(0, 0.5, 0);
         box.add(this.particleSystem.points);
         data.scene.add(box);
