@@ -53,7 +53,7 @@ export class TwinkleStarsScene {
         }, data);
         this.particleSystem.init();
 
-        const bounds = [new Vector2(-0.25, -0.5), new Vector2(0.0, 0.5), new Vector2(0.25, -0.5)];
+        const bounds = [new Vector2(-0.5, -0.5), new Vector2(0.0, 0.5), new Vector2(0.5, -0.5)];
         const test = new Vector2();
         let x: number, y: number;
         this.particleSystem.particles.forEach(p => {
