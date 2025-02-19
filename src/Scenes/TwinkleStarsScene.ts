@@ -67,10 +67,32 @@ export class TwinkleStarsScene {
             const point = new Vector3(x, y, -0.5);
 
             // Rotate the point to lie on another face
-            point
-                .applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2)
-                .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI / 8)
-                .add(new Vector3(0.25, -0.25, 0));
+            const faceIdx = Math.floor(Math.random() * 4);
+            switch (faceIdx) {
+                case 0:
+                    point
+                        .applyAxisAngle(new Vector3(1, 0, 0), Math.PI / 8)
+                        .add(new Vector3(0, -0.25, 0.25));
+                    break;
+                case 1:
+                    point
+                        .applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2)
+                        .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI / 8)
+                        .add(new Vector3(0.25, -0.25, 0));
+                    break;
+                case 2:
+                    point
+                        .applyAxisAngle(new Vector3(0, 1, 0), Math.PI)
+                        .applyAxisAngle(new Vector3(-1, 0, 0), Math.PI / 8)
+                        .add(new Vector3(0, -0.25, -0.25));
+                    break;
+                case 3:
+                    point
+                        .applyAxisAngle(new Vector3(0, 1, 0), Math.PI * 3 / 2)
+                        .applyAxisAngle(new Vector3(0, 0, 1), Math.PI / 8)
+                        .add(new Vector3(-0.25, -0.25, 0));
+                    break;
+            }
 
             // Assign the position
             p.position.copy(point);
