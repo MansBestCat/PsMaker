@@ -64,9 +64,9 @@ export class TwinkleStarsScene {
                 y = Math.random() - 0.5;
                 test.set(x, y);
             } while (!Utility.isPointInPolygon(test, bounds));
+            const point = new Vector3(x, y, -0.5);
 
             // Rotate the point to lie on another face
-            const point = new Vector3(x, y, -0.5);
             point
                 .applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2)
                 .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI / 8)
