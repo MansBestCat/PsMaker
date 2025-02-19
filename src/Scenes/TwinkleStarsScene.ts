@@ -67,7 +67,9 @@ export class TwinkleStarsScene {
 
             // Rotate the point to lie on another face
             const point = new Vector3(x, y, -0.5);
-            point.applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
+            point
+                .applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2)
+                .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI / 4);
 
             // Assign the position
             p.position.copy(point);
