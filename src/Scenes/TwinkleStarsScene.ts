@@ -53,18 +53,19 @@ export class TwinkleStarsScene {
         }, data);
         this.particleSystem.init();
 
-        const bounds = [new Vector2(-0.5, -0.5), new Vector2(0.0, 0.5), new Vector2(0.5, -0.5)];
+        const dim = 2;  //radius and height of cone
+        const bounds = [new Vector2(-dim / 2, -dim / 2), new Vector2(0.0, dim / 2), new Vector2(dim / 2, -dim / 2)];
         const test = new Vector2();
         let x: number, y: number;
         this.particleSystem.particles.forEach(p => {
 
             // Determine a point on the front face
             do {
-                x = Math.random() - 0.5;
-                y = Math.random() - 0.5;
+                x = Math.random() * dim - 1.0;
+                y = Math.random() * dim - 1.0;
                 test.set(x, y);
             } while (!Utility.isPointInPolygon(test, bounds));
-            const point = new Vector3(x, y, -0.5);
+            const point = new Vector3(x, y, -dim / 2);
 
             // Rotate the point to lie on another face
             const faceIdx = Math.floor(Math.random() * 4);
@@ -72,25 +73,25 @@ export class TwinkleStarsScene {
                 case 0:
                     point
                         .applyAxisAngle(new Vector3(1, 0, 0), Math.PI / 8)
-                        .add(new Vector3(0, -0.25, 0.25));
+                        .add(new Vector3(0, -dim / 4, dim / 4));
                     break;
                 case 1:
                     point
                         .applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 2)
                         .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI / 8)
-                        .add(new Vector3(0.25, -0.25, 0));
+                        .add(new Vector3(dim / 4, -dim / 4, 0));
                     break;
                 case 2:
                     point
                         .applyAxisAngle(new Vector3(0, 1, 0), Math.PI)
                         .applyAxisAngle(new Vector3(-1, 0, 0), Math.PI / 8)
-                        .add(new Vector3(0, -0.25, -0.25));
+                        .add(new Vector3(0, -dim / 4, -dim / 4));
                     break;
                 case 3:
                     point
                         .applyAxisAngle(new Vector3(0, 1, 0), Math.PI * 3 / 2)
                         .applyAxisAngle(new Vector3(0, 0, 1), Math.PI / 8)
-                        .add(new Vector3(-0.25, -0.25, 0));
+                        .add(new Vector3(-dim / 4, -dim / 4, 0));
                     break;
             }
 
@@ -98,19 +99,18 @@ export class TwinkleStarsScene {
             p.position.copy(point);
         });
 
-        // mount the ps to a cone
-        const width = 1;
+        // mount the ps to a cone        
         const geometry = new ConeGeometry(
-            width / 2, width, 4, 1, false, Math.PI / 4);
+            dim / 2, dim, 4, 1, false, Math.PI / 4);
 
         const material = new MeshBasicMaterial({ name: "transparent", color: new Color(0x00ff00), transparent: true, opacity: 0.5 });
         const box = new Mesh(geometry, material);
-        box.position.set(0, 0.5, 0);
+        box.position.set(0, dim / 2, 0);
         box.add(this.particleSystem.points);
         data.scene.add(box);
 
         // attach orbit controls
-        const orbitControls = cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
+        cameraManMain.makeCameraOrbital(new Vector3(0, dim / 4, 0));
 
         this.animate();
     }
