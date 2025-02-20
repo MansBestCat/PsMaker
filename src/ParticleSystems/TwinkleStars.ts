@@ -102,13 +102,16 @@ export class TwinkleStars extends ParticleSystemBase {
     }
 
     updateParticles(timeElapsed: number): void {
+        const P_ACTIVATE = 0.001;
         const color = new Color();
 
         this.particles.forEach(p => {
 
             // Give each particle a chance to activate
-            if (p.life === -1 && Math.random() > 0.95) {
-                p.life = 0;
+            if (p.life === -1) {
+                if (Math.random() < P_ACTIVATE) {
+                    p.life = 0;
+                }
                 return; // that's it for this particle this iteration
             }
 
