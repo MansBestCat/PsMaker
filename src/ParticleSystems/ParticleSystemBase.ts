@@ -62,6 +62,8 @@ export abstract class ParticleSystemBase {
     }
 
     abstract makeParticle(): Particle;
+
+    /** Increment a particle's life and update its other properties from splines */
     abstract updateParticles(timeElapsed: number): void;
 
     addParticlesGate(timeElapsed: number) {
