@@ -4,30 +4,32 @@ import { Utility } from "../Utilitites/Utility";
 
 
 export class Particle {
-    alpha!: number;
-    life!: number;
-    maxLife!: number;
+    alpha!: number;     // 0.0 to 1.0
+    life!: number;      // ms, 0-based number, from 0 to maxLife-1
+    maxLife!: number;   // ms, 1-based number
     position!: Vector3;
     size!: number;
     colour!: Color;
-    rotation!: number;
+    rotation!: number;  // rads
     velocity!: Vector3;
     tScalar!: number; // optionally used to index a spline in a way to create a faster or slower animation
 }
 
 
 export abstract class ParticleSystemBase {
+    particles: Particle[];
+
     geometry: BufferGeometry;
     material!: ShaderMaterial;
-    particles: Particle[];
     points!: Points<BufferGeometry, Material>;
+
     frequency: number;  //emit every frequency ms
     freqCounter: number;
-    maxEmitterLife?: number;    // duration of the particle system. If defined, must be gt 0
-    maxParticleLife!: number;
-
     emitterLife: number;       // range from 0 to maxEmitterLife
+    maxEmitterLife?: number;    // duration of the particle system. If defined, must be gt 0
     emitRateSpline?: LinearSpline;
+
+    maxParticleLife!: number;
 
     constructor(params: any) {
         if (!params.frequency) {
