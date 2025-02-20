@@ -58,7 +58,10 @@ export class TwinkleStars extends ParticleSystemBase {
             return a + t * (b - a);
         });
         this.alphaSpline.addPoint(0.0, 0.0);
-        this.alphaSpline.addPoint(0.1, 1.0);
+        this.alphaSpline.addPoint(0.02, 0.23);
+        this.alphaSpline.addPoint(0.09, 1.00);
+        this.alphaSpline.addPoint(0.21, 0.47);
+        this.alphaSpline.addPoint(0.43, 0.26);
         this.alphaSpline.addPoint(1.0, 0.0);
 
         this.colorSpline = new LinearSplineOut((t: number, a: Color, b: Color, result: Color) => {
@@ -95,7 +98,7 @@ export class TwinkleStars extends ParticleSystemBase {
         particle.colour = new Color();
         particle.alpha = this.alphaSpline.get(0);
         particle.life = -1;
-        particle.maxLife = 2000;
+        particle.maxLife = 3500;
         particle.tScalar = Math.random() + 0.5; // 0.5-1.5
 
         return particle;
