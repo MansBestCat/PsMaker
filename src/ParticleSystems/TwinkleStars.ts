@@ -1,4 +1,3 @@
-import { createNoise2D } from "simplex-noise";
 import { AdditiveBlending, Color, Points, ShaderMaterial, Vector3 } from "three";
 import { Data } from "../Data";
 import { LinearSpline } from "../Utilitites/LinearSpline";
@@ -34,7 +33,6 @@ export class TwinkleStars extends ParticleSystemBase {
 
     alphaSpline: LinearSpline;
     colorSpline: LinearSplineOut;
-    noise: Array<number>;
 
     constructor(params: any, public data: Data) {
 
@@ -61,7 +59,6 @@ export class TwinkleStars extends ParticleSystemBase {
         });
         this.alphaSpline.addPoint(0.0, 0.0);
         this.alphaSpline.addPoint(0.1, 1.0);
-        this.alphaSpline.addPoint(0.6, 1.0);
         this.alphaSpline.addPoint(1.0, 0.0);
 
         this.colorSpline = new LinearSplineOut((t: number, a: Color, b: Color, result: Color) => {
@@ -73,28 +70,17 @@ export class TwinkleStars extends ParticleSystemBase {
 
         this.updateGeometry();
 
-        this.noise = new Array();
     }
 
     init() {
-        const N_STARS = 100;
+        // This ps pushes all particles in advance.
+        // After init, the array is final, no particles are added or removed.
+        const N_PARTICLES = 100;
 
-        for (let i = 0; i < N_STARS; i++) {
+        for (let i = 0; i < N_PARTICLES; i++) {
             const particle = this.makeParticle();
             this.particles.push(particle);
         }
-
-        // Make a shared noise array for the ps
-        const noise2D = createNoise2D();
-        const i = Math.random();
-        for (let j = 0; j < 1; j += 0.00015) { // 15000 ms
-            this.noise.push(Math.pow(noise2D(i, j) * 0.5 + 0.5, 5));
-        }
-        // After exponentiating values, re-normalize max to 1
-        const max = Math.max(...this.noise);
-        const scaleToOne = 1 / max;
-        this.noise = this.noise.map(n => n * scaleToOne);
-        this.noise = this.noise.map(n => n < 0.1 ? 0 : n); //
     }
 
     tick(timeElapsed: number) {
@@ -108,27 +94,34 @@ export class TwinkleStars extends ParticleSystemBase {
         particle.size = 30;
         particle.colour = new Color();
         particle.alpha = this.alphaSpline.get(0);
-        particle.life = Math.round(Math.random() * 15);
-        particle.tScalar = Math.random() * 2.0 - 1.0;
+        particle.life = -1;
+        particle.maxLife = 2000;
+        particle.tScalar = Math.random() + 0.5; // 0.5-1.5
 
         return particle;
     }
 
     updateParticles(timeElapsed: number): void {
         const color = new Color();
+
         this.particles.forEach(p => {
 
-            // increment or decrement p.life according to scalar
-            p.life += Math.round(timeElapsed * p.tScalar);
-
-            // Wrap to clamp values between 0 and noise.length
-            if (p.life > this.noise.length) {
-                p.life = p.life - this.noise.length;
-            } else if (p.life < 0) {
-                p.life = this.noise.length + p.life;
+            // Give each particle a chance to activate
+            if (p.life === -1 && Math.random() > 0.95) {
+                p.life = 0;
+                return; // that's it for this particle this iteration
             }
 
-            p.alpha = this.noise[p.life];
+            // increment life according to scalar
+            p.life += Math.round(timeElapsed * p.tScalar);
+
+            if (p.life >= p.maxLife) {
+                // particle is done animating, deactivate it
+                p.life = -1;
+                return; // that's it for this particle this iteration
+            }
+
+            p.alpha = this.alphaSpline.get(p.life / p.maxLife);
             //p.colour.copy(this.colorSpline.getResult(t, color));
         });
 
