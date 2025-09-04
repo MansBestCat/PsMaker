@@ -4,6 +4,7 @@ import { GameEngine } from './GameEngine';
 import { CoronaScene } from './Scenes/CoronaScene';
 import { SmokePuffScene } from './Scenes/SmokePuffScene';
 import { SparksScene } from './Scenes/SparksScene';
+import { SplineFollowerScene } from './Scenes/SplineFollowerScene';
 import { TwinkleStarsScene } from './Scenes/TwinkleStarsScene';
 
 // MAIN 
@@ -30,6 +31,9 @@ window.addEventListener('DOMContentLoaded', () => {
       break;
     case "TwinkleStars":
       new TwinkleStarsScene().go(data, cameraManMain);
+      break;
+    case "SplineFollower":
+      new SplineFollowerScene().go(data, cameraManMain);
       break;
   }
 });
