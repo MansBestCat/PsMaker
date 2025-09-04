@@ -81,6 +81,7 @@ export class SplineFollower extends ParticleSystemBase {
     init() {
         new TextureLoader().loadAsync(`textures/smoke.png`).then((texture: Texture) => {
             this.material.uniforms.diffuseTexture.value = texture;
+            this.material.needsUpdate = true;
         }).catch((err) => {
             console.error(`${Utility.timestamp()} Could not get texture`);
         });
