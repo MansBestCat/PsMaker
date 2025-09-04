@@ -32,6 +32,7 @@ export class SplineFollowerScene {
         data.scene.add(this.lineGeom);
 
         this.particleSystem = new SplineFollower({ frequency: 64 }, this.spline);
+        this.particleSystem.init();
         data.scene.add(this.particleSystem.points);
 
         const gui = new GUI();
@@ -46,6 +47,12 @@ export class SplineFollowerScene {
             folder.add(pt, "x", -10, 10).onChange(() => this.updateSpline());
             folder.add(pt, "y", -10, 10).onChange(() => this.updateSpline());
             folder.add(pt, "z", -10, 10).onChange(() => this.updateSpline());
+        });
+
+        const orbitControls = cameraManMain.makeCameraOrbital(new Vector3(0, 0, 0));
+        orbitControls.addEventListener('change', () => {
+            this.particleSystem.points.lookAt(data.camera!.position);
+            this.particleSystem.points.rotateX(-Math.PI / 2);
         });
 
         this.animate();

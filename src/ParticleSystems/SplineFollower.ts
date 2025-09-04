@@ -1,5 +1,6 @@
-import { CatmullRomCurve3, Color, NormalBlending, Points, ShaderMaterial } from "three";
+import { CatmullRomCurve3, Color, DoubleSide, NormalBlending, Points, ShaderMaterial, Texture, TextureLoader } from "three";
 import { LinearSpline } from "../Utilitites/LinearSpline";
+import { Utility } from "../Utilitites/Utility";
 import { Particle, ParticleSystemBase } from "./ParticleSystemBase";
 
 const _VS = `
@@ -16,8 +17,8 @@ void main() {
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 
   gl_Position = projectionMatrix * mvPosition;
-  gl_PointSize = size * pointMultiplier / gl_Position.w;
-
+  // gl_PointSize = size * pointMultiplier / gl_Position.w;
+  gl_PointSize = 10.0;
   vAngle = vec2(cos(angle), sin(angle));
   vColour = colour;
 }`;
@@ -36,32 +37,39 @@ void main() {
 `;
 
 export class SplineFollower extends ParticleSystemBase {
-    
+
     velocityScalar = 0.5;
     dampingFactor = 0.1;
-    maxParticleLife = 1000;
+    maxParticleLife = 10000;
 
     spline: CatmullRomCurve3;
 
     constructor(params: any, spline: CatmullRomCurve3) {
-      
+
         super(params);
 
-        this.spline = spline;
+       const uniforms = {
+            diffuseTexture: { value: undefined },
+            pointMultiplier: { value: window.devicePixelRatio }
+        }
 
+        this.spline = spline;
         this.material = new ShaderMaterial({
-            vertexColors: true,
-            transparent: true,
-            depthWrite: false,
-            blending: NormalBlending,
-            uniforms: {},
+            uniforms,
             vertexShader: _VS,
             fragmentShader: _FS,
+            blending: NormalBlending,
+            depthWrite: false,
+            transparent: true,
+            vertexColors: true,
+            side: DoubleSide,
+            alphaTest: 0.01
         });
+
 
         this.points = new Points(this.geometry, this.material);
 
-     this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
+        this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
         this.emitRateSpline.addPoint(0.0, 1.0);
@@ -69,6 +77,15 @@ export class SplineFollower extends ParticleSystemBase {
         this.updateGeometry();
 
     }
+
+    init() {
+        new TextureLoader().loadAsync(`textures/smoke.png`).then((texture: Texture) => {
+            this.material.uniforms.diffuseTexture.value = texture;
+        }).catch((err) => {
+            console.error(`${Utility.timestamp()} Could not get texture`);
+        });
+    }
+
 
     makeParticle(): Particle {
         const particle = new Particle();
@@ -95,7 +112,7 @@ export class SplineFollower extends ParticleSystemBase {
         });
 
         this.particles = this.particles.filter(p => p.life < p.maxLife);
-        
+
         this.updateGeometry();
     }
 }
