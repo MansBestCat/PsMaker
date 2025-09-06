@@ -4,14 +4,18 @@ import { Utility } from "../Utilitites/Utility";
 
 
 export class Particle {
-    alpha!: number;     // 0.0 to 1.0
     life!: number;      // ms, 0-based number, from 0 to maxLife-1
     maxLife!: number;   // ms, 1-based number
+    
+    velocity!: Vector3;  // direction unit v
+
+    // Used to compose values for the 4 bufferAttributes
     position!: Vector3;
     size!: number;
+    alpha!: number;     // 0.0 to 1.0
     colour!: Color;
-    rotation!: number;  // rads
-    velocity!: Vector3;
+    rotation?: number;  // angle?
+
     tScalar!: number; // optionally used to index a spline in a way to create a faster or slower animation
 }
 
@@ -112,8 +116,8 @@ export abstract class ParticleSystemBase {
 
         for (const p of this.particles) {
             positions.push(p.position.x, p.position.y, p.position.z);
-            colours.push(p.colour.r, p.colour.g, p.colour.b, p.alpha);
             sizes.push(p.size);
+            colours.push(p.colour.r, p.colour.g, p.colour.b, p.alpha);
             angles.push(0); // FIXME:
         }
 

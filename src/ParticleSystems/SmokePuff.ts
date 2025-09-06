@@ -144,6 +144,8 @@ export class SmokePuff extends ParticleSystemBase {
             p.alpha = this.alphaSpline.get(t);
             p.size = this.sizeSpline.get(t);
             p.colour.copy(this.colorSpline.getResult(t, color));
+
+            // Slows the particle toward the end of its life
             p.position.add(p.velocity.clone().multiplyScalar((1 - t) * V_DAMP_FACTOR));
         });
 

@@ -120,9 +120,11 @@ export class SmokePlume extends ParticleSystemBase {
 
     makeParticle() {
         const particle = new Particle();
-        particle.size = 1.0;
+
         particle.position = new Vector3(0, 0, 0);
+        particle.size = 1.0;
         particle.colour = new Color();
+
         particle.alpha = this.alphaSpline.get(0);
         particle.maxLife = this.maxParticleLife;
         particle.life = 0;
@@ -135,16 +137,20 @@ export class SmokePlume extends ParticleSystemBase {
     updateParticles(timeElapsed: number): void {
         const V_DAMP_FACTOR = 0.1;
         const color = new Color();
+
         this.particles.forEach((p: Particle) => {
+            
             p.life += timeElapsed;
 
             const t = Math.min(p.life / p.maxLife, 1); // t range is 0 to 1
 
-            //p.rotation += timeElapsed * 0.5;
-            p.alpha = this.alphaSpline.get(t);
-            p.size = this.sizeSpline.get(t);
-            p.colour.copy(this.colorSpline.getResult(t, color));
             p.position.add(p.velocity.clone().multiplyScalar((1 - t) * V_DAMP_FACTOR));
+            
+            p.size = this.sizeSpline.get(t);
+            p.alpha = this.alphaSpline.get(t);
+            p.colour.copy(this.colorSpline.getResult(t, color));
+            //p.rotation += timeElapsed * 0.5;
+
         });
 
         this.particles = this.particles.filter(p =>
