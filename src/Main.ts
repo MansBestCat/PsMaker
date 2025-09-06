@@ -2,9 +2,9 @@ import { CameraManMain } from './Camera/CameraManMain';
 import { Data } from './Data';
 import { GameEngine } from './GameEngine';
 import { CoronaScene } from './Scenes/CoronaScene';
+import { SmokePlumeScene } from './Scenes/SmokePlumeScene';
 import { SmokePuffScene } from './Scenes/SmokePuffScene';
 import { SparksScene } from './Scenes/SparksScene';
-import { SplineFollowerScene } from './Scenes/SplineFollowerScene';
 import { TwinkleStarsScene } from './Scenes/TwinkleStarsScene';
 
 // MAIN 
@@ -32,8 +32,8 @@ window.addEventListener('DOMContentLoaded', () => {
     case "TwinkleStars":
       new TwinkleStarsScene().go(data, cameraManMain);
       break;
-    case "SplineFollower":
-      new SplineFollowerScene().go(data, cameraManMain);
+    case "SmokePlume":
+      new SmokePlumeScene().go(data, cameraManMain);
       break;
   }
 });
