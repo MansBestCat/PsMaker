@@ -1,6 +1,7 @@
 import { createNoise2D } from "simplex-noise";
 import { Color, NormalBlending, Points, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
 import { Data } from "../Data";
+import { Random } from "../Random";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
 import { Utility } from "../Utilitites/Utility";
@@ -41,13 +42,13 @@ void main() {
 }`;
 
 export class SmokePlume extends ParticleSystemBase {
-    maxParticleLife = 400;
+    maxParticleLife = 4000;
 
     alphaSpline: LinearSpline;
     colorSpline: LinearSplineOut;
     sizeSpline: LinearSpline;
     velocitySpline: LinearSpline;
-    
+
     noise: any;
 
 
@@ -119,7 +120,7 @@ export class SmokePlume extends ParticleSystemBase {
         }).catch((err) => {
             console.error(`${Utility.timestamp()} Could not get texture`);
         });
-        this.noise = createNoise2D();  // is rng param needed? Math.random() suffice?
+        this.noise = createNoise2D(Random.getRng("sdfwa4"));  // is rng param needed? Math.random() suffice?
     }
 
     makeParticle() {
@@ -138,13 +139,14 @@ export class SmokePlume extends ParticleSystemBase {
 
         let diff: number; // [-1,1]
         const i = Date.now();
-        diff = this.noise(0, i * 0.1 + SLIGHT_OFFSET);
-        particle.rotation = windDirection + diff * Math.PI / 16;
+        diff = this.noise(0, i * 0.0001 + SLIGHT_OFFSET);
+        //console.log(`${Utility.timestamp()} ${diff}`);
+        particle.rotation = windDirection + diff * Math.PI / 7;
         particle.velocity = new Vector3(
             Math.cos(particle.rotation),
             0,
-            Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1
-        );
+            Math.sin(particle.rotation)
+        ).multiplyScalar(0.5);
 
         return particle;
     }
@@ -171,6 +173,6 @@ export class SmokePlume extends ParticleSystemBase {
         this.particles = this.particles.filter(p =>
             p.life < p.maxLife
         );
-        console.log(`${Utility.timestamp()} ${this.particles.length}`);
+        //console.log(`${Utility.timestamp()} ${this.particles.length}`);
     }
 }
