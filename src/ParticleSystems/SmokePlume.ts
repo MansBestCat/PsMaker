@@ -139,12 +139,12 @@ export class SmokePlume extends ParticleSystemBase {
         const color = new Color();
 
         this.particles.forEach((p: Particle) => {
-            
+
             p.life += timeElapsed;
 
             const t = Math.min(p.life / p.maxLife, 1); // t range is 0 to 1
 
-            p.position.add(p.velocity.clone().multiplyScalar((1 - t) * V_DAMP_FACTOR));
+            p.position.add(p.velocity.clone().multiplyScalar( V_DAMP_FACTOR));
             
             p.size = this.sizeSpline.get(t);
             p.alpha = this.alphaSpline.get(t);
