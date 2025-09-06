@@ -1,3 +1,4 @@
+import { createNoise2D } from "simplex-noise";
 import { Color, NormalBlending, Points, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
 import { Data } from "../Data";
 import { LinearSpline } from "../Utilitites/LinearSpline";
@@ -46,6 +47,8 @@ export class SmokePlume extends ParticleSystemBase {
     colorSpline: LinearSplineOut;
     sizeSpline: LinearSpline;
     velocitySpline: LinearSpline;
+    
+    noise: any;
 
 
     constructor(params: any, public data: Data) {
@@ -116,9 +119,13 @@ export class SmokePlume extends ParticleSystemBase {
         }).catch((err) => {
             console.error(`${Utility.timestamp()} Could not get texture`);
         });
+        this.noise = createNoise2D();  // is rng param needed? Math.random() suffice?
     }
 
     makeParticle() {
+        const SLIGHT_OFFSET = 0.0001; // Prevents passing zero arg to noise()
+        const windDirection = Math.PI / 4;
+
         const particle = new Particle();
 
         particle.position = new Vector3(0, 0, 0);
@@ -128,8 +135,16 @@ export class SmokePlume extends ParticleSystemBase {
         particle.alpha = this.alphaSpline.get(0);
         particle.maxLife = this.maxParticleLife;
         particle.life = 0;
-        particle.rotation = Math.random() * 2.0 * Math.PI;
-        particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
+
+        let diff: number; // [-1,1]
+        const i = Date.now();
+        diff = this.noise(0, i * 0.1 + SLIGHT_OFFSET);
+        particle.rotation = windDirection + diff * Math.PI / 16;
+        particle.velocity = new Vector3(
+            Math.cos(particle.rotation),
+            0,
+            Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1
+        );
 
         return particle;
     }
@@ -144,8 +159,8 @@ export class SmokePlume extends ParticleSystemBase {
 
             const t = Math.min(p.life / p.maxLife, 1); // t range is 0 to 1
 
-            p.position.add(p.velocity.clone().multiplyScalar( V_DAMP_FACTOR));
-            
+            p.position.add(p.velocity.clone().multiplyScalar(V_DAMP_FACTOR));
+
             p.size = this.sizeSpline.get(t);
             p.alpha = this.alphaSpline.get(t);
             p.colour.copy(this.colorSpline.getResult(t, color));
