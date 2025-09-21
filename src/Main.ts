@@ -3,6 +3,7 @@ import { Data } from './Data';
 import { GameEngine } from './GameEngine';
 import { CoronaScene } from './Scenes/CoronaScene';
 import { SmokePlumeScene } from './Scenes/SmokePlumeScene';
+import { SmokePuffFlipbookScene } from './Scenes/SmokePuffFlipbookScene';
 import { SmokePuffScene } from './Scenes/SmokePuffScene';
 import { SparksScene } from './Scenes/SparksScene';
 import { TwinkleStarsScene } from './Scenes/TwinkleStarsScene';
@@ -34,6 +35,9 @@ window.addEventListener('DOMContentLoaded', () => {
       break;
     case "SmokePlume":
       new SmokePlumeScene().go(data, cameraManMain);
+      break;
+    case "SmokePuffFlipbook":
+      new SmokePuffFlipbookScene().go(data, cameraManMain);
       break;
   }
 });

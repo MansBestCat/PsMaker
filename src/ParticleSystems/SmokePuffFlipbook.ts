@@ -1,4 +1,4 @@
-import { Color, NormalBlending, Points, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
+import { Color, LinearFilter, NormalBlending, Points, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
 import { Data } from "../Data";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
@@ -13,9 +13,11 @@ uniform float pointMultiplier;
 attribute float size;
 attribute float angle;
 attribute vec4 colour;
+attribute float frameIndex;
 
 varying vec4 vColour;
 varying vec2 vAngle;
+varying float vFrameIndex;
 
 void main() {
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
@@ -25,22 +27,42 @@ void main() {
 
   vAngle = vec2(cos(angle), sin(angle));
   vColour = colour;
+  vFrameIndex = frameIndex;
 }`;
 
 const _FS = `
 
 uniform sampler2D diffuseTexture;
+uniform float cols;
+uniform float rows;
 
 varying vec4 vColour;
 varying vec2 vAngle;
+varying float vFrameIndex;
 
 void main() {
   vec2 coords = (gl_PointCoord - 0.5) * mat2(vAngle.x, vAngle.y, -vAngle.y, vAngle.x) + 0.5;
-  gl_FragColor = texture2D(diffuseTexture, coords) * vColour;
-}`;
+
+  float totalFrames = cols * rows;
+  float currentFrame = floor(mod(vFrameIndex, totalFrames));
+
+  float row = rows - 1.0 - floor(currentFrame / cols);
+  float col = mod(currentFrame, cols);
+
+  vec2 uvOffset = vec2(col / cols, row / rows);
+  vec2 uvScale = vec2(1.0 / cols, 1.0 / rows);
+
+  vec2 uv = uvOffset + coords * uvScale;
+  vec4 tex = texture2D(diffuseTexture, uv);
+
+  gl_FragColor = tex * vColour;
+}
+
+  
+`;
 
 export class SmokePuffFlipbook extends ParticleSystemBase {
-    maxParticleLife = 400;
+    maxParticleLife = 4000;
 
     alphaSpline: LinearSpline;
     colorSpline: LinearSplineOut;
@@ -58,7 +80,9 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
             },
             pointMultiplier: {
                 value: window.innerHeight / (2.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))
-            }
+            },
+            cols: { value: 8 },
+            rows: { value: 8 }
         };
 
         this.material = new ShaderMaterial({
@@ -78,15 +102,15 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
         this.alphaSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this.alphaSpline.addPoint(0.0, 0.7);
-        this.alphaSpline.addPoint(1.0, 0.0);
+        this.alphaSpline.addPoint(0.0, 1.0);
+        this.alphaSpline.addPoint(1.0, 1.0);
 
         this.colorSpline = new LinearSplineOut((t: number, a: Color, b: Color, result: Color) => {
             result.copy(a);
             return result.lerp(b, t);
         });
-        this.colorSpline.addPoint(0.0, new Color(0x757575));
-        this.colorSpline.addPoint(1.0, new Color(0x4f4f4f));
+        this.colorSpline.addPoint(0.0, new Color(0xffffff));
+        this.colorSpline.addPoint(1.0, new Color(0xffffff));
 
         this.sizeSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
@@ -105,13 +129,15 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
         this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (b - a);
         });
-        this.emitRateSpline.addPoint(0.0, 1.0);
+        this.emitRateSpline.addPoint(0.0, 0.0001);
 
         this.updateGeometry();
     }
 
     init() {
         new TextureLoader().loadAsync(`textures/smoke.png`).then((texture: Texture) => {
+            texture.minFilter = LinearFilter;
+            texture.magFilter = LinearFilter;
             this.material.uniforms.diffuseTexture.value = texture;
         }).catch((err) => {
             console.error(`${Utility.timestamp()} Could not get texture`);
@@ -128,6 +154,8 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
         particle.life = 0;
         particle.rotation = Math.random() * 2.0 * Math.PI;
         particle.velocity = new Vector3(Math.cos(particle.rotation), 0, Math.sin(particle.rotation)).multiplyScalar(Math.random() + 1);
+
+        particle.frameIndex = 0; // initialize
 
         return particle;
     }
@@ -147,6 +175,10 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
 
             // Slows the particle toward the end of its life
             p.position.add(p.velocity.clone().multiplyScalar((1 - t) * V_DAMP_FACTOR));
+
+            const frameProgress = Math.floor((p.life / 1000) * p.frameRate);
+            p.frameIndex = frameProgress % p.totalFrames;
+
         });
 
         this.particles = this.particles.filter(p =>

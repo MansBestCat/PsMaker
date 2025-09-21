@@ -5,6 +5,7 @@ import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { Data } from "../Data";
 import { ParticleSystemBase } from "../ParticleSystems/ParticleSystemBase";
 import { SmokePuff } from "../ParticleSystems/SmokePuff";
+import { SmokePuffFlipbook } from "../ParticleSystems/SmokePuffFlipbook";
 import { Utility } from "../Utilitites/Utility";
 
 export class SmokePuffFlipbookScene {
@@ -49,7 +50,7 @@ export class SmokePuffFlipbookScene {
         const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xeeeeee) }));
         data.scene.add(ground);
 
-        this.particleSystem = new SmokePuff({
+        this.particleSystem = new SmokePuffFlipbook({
             maxEmitterLife: undefined,
             frequency: 128 // every 8th tick
         }, data);

@@ -6,7 +6,7 @@ import { Utility } from "../Utilitites/Utility";
 export class Particle {
     life!: number;      // ms, 0-based number, from 0 to maxLife-1
     maxLife!: number;   // ms, 1-based number
-    
+
     velocity!: Vector3;  // direction unit v
 
     // Used to compose values for the 4 bufferAttributes
@@ -17,6 +17,10 @@ export class Particle {
     rotation?: number;  // angle?
 
     tScalar!: number; // optionally used to index a spline in a way to create a faster or slower animation
+
+    totalFrames = 64; // e.g., 8x8 flipbook
+    frameRate = 24;   // frames per second
+    frameIndex=-1;
 }
 
 
@@ -46,6 +50,7 @@ export abstract class ParticleSystemBase {
         this.geometry.setAttribute('size', new Float32BufferAttribute([], 1));
         this.geometry.setAttribute('colour', new Float32BufferAttribute([], 4));
         this.geometry.setAttribute('angle', new Float32BufferAttribute([], 1));
+        this.geometry.setAttribute("frameIndex", new Float32BufferAttribute([], 1));
 
         if (params.maxEmitterLife) {
             if (params.maxEmitterLife === 0) {
@@ -113,12 +118,14 @@ export abstract class ParticleSystemBase {
         const sizes: number[] = [];
         const colours: number[] = [];
         const angles: number[] = [];
+        const frameIndices: number[] = [];
 
         for (const p of this.particles) {
             positions.push(p.position.x, p.position.y, p.position.z);
             sizes.push(p.size);
             colours.push(p.colour.r, p.colour.g, p.colour.b, p.alpha);
             angles.push(0); // FIXME:
+            frameIndices.push(p.frameIndex);
         }
 
         this.geometry.setAttribute(
@@ -129,11 +136,14 @@ export abstract class ParticleSystemBase {
             'colour', new Float32BufferAttribute(colours, 4));
         this.geometry.setAttribute(
             'angle', new Float32BufferAttribute(angles, 1));
+        this.geometry.setAttribute(
+            'frameIndex', new Float32BufferAttribute(frameIndices, 1));
 
         this.geometry.attributes.position.needsUpdate = true;
         this.geometry.attributes.size.needsUpdate = true;
         this.geometry.attributes.colour.needsUpdate = true;
         this.geometry.attributes.angle.needsUpdate = true;
+        this.geometry.attributes.frameIndex.needsUpdate = true;
     }
 
     sort() {
