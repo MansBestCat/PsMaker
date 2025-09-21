@@ -18,6 +18,7 @@ export class Particle {
 
     tScalar!: number; // optionally used to index a spline in a way to create a faster or slower animation
 
+    // For flipbook ps
     totalFrames = 64; // e.g., 8x8 flipbook
     frameRate = 24;   // frames per second
     frameIndex=-1;

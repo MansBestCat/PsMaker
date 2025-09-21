@@ -1,5 +1,5 @@
 import GUI from "lil-gui";
-import { AmbientLight, BoxGeometry, Color, DirectionalLight, Mesh, MeshPhongMaterial, Vector3 } from "three";
+import { AmbientLight, BoxGeometry, Color, Mesh, MeshPhongMaterial, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
 import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { Data } from "../Data";
@@ -22,24 +22,8 @@ export class SmokePuffFlipbookScene {
             throw new Error(`${Utility.timestamp()} Expected camera`);
         }
 
-        let light = new DirectionalLight(0xFFFFFF, 1.0);
-        light.position.set(20, 100, 10);
-        light.target.position.set(0, 0, 0);
-        light.castShadow = true;
-        light.shadow.bias = -0.001;
-        light.shadow.mapSize.width = 2048;
-        light.shadow.mapSize.height = 2048;
-        light.shadow.camera.near = 0.1;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.near = 0.5;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.left = 100;
-        light.shadow.camera.right = -100;
-        light.shadow.camera.top = 100;
-        light.shadow.camera.bottom = -100;
-        data.scene.add(light);
-
-        const ambientlight = new AmbientLight(0x101010);
+        const ambientlight = new AmbientLight(0xffffff);
+        //ambientlight.intensity=2.0;
         data.scene.add(ambientlight);
 
         // camera
@@ -47,7 +31,7 @@ export class SmokePuffFlipbookScene {
         data.camera?.lookAt(0, 2, 0);
 
         // Ground
-        const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xeeeeee) }));
+        const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xfffffff) }));
         data.scene.add(ground);
 
         this.particleSystem = new SmokePuffFlipbook({
