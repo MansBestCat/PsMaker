@@ -1,5 +1,5 @@
 import GUI from "lil-gui";
-import { AmbientLight, BoxGeometry, Color, Mesh, MeshPhongMaterial, Vector3 } from "three";
+import { AmbientLight, BoxGeometry, Color, Mesh, MeshPhongMaterial, PointLight, Vector3 } from "three";
 import { CameraManMain } from "../Camera/CameraManMain";
 import { CurveEditor } from "../CurveEditor/CurveEditor";
 import { Data } from "../Data";
@@ -23,15 +23,18 @@ export class SmokePuffFlipbookScene {
         }
 
         const ambientlight = new AmbientLight(0xffffff);
-        //ambientlight.intensity=2.0;
         data.scene.add(ambientlight);
+
+        const pointLight = new PointLight(new Color(0xffddff), 1.0);
+        pointLight.position.set(0, 5, -3);
+        data.scene.add(pointLight);
 
         // camera
         data.camera.position.set(0, 7, -12);
         data.camera?.lookAt(0, 2, 0);
 
         // Ground
-        const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0xfffffff) }));
+        const ground = new Mesh(new BoxGeometry(10, 0, 10), new MeshPhongMaterial({ color: new Color(0x00ee22) }));
         data.scene.add(ground);
 
         this.particleSystem = new SmokePuffFlipbook({
