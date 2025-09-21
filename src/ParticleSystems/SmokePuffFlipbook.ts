@@ -1,4 +1,4 @@
-import { Color, LinearFilter, NormalBlending, Points, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
+import { Color, NormalBlending, Points, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
 import { Data } from "../Data";
 import { LinearSpline } from "../Utilitites/LinearSpline";
 import { LinearSplineOut } from "../Utilitites/LinearSplineOut";
@@ -125,9 +125,7 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
         this.velocitySpline = new LinearSpline((t: number, a: number, b: number) => {
             return a + t * (a - b);
         });
-        this.velocitySpline.addPoint(0.0, 4.3);
-        this.velocitySpline.addPoint(0.07, 1.86);
-        this.velocitySpline.addPoint(0.21, 0.71);
+        this.velocitySpline.addPoint(0.0, 5.0);
         this.velocitySpline.addPoint(1.0, 0.0);
 
         this.emitRateSpline = new LinearSpline((t: number, a: number, b: number) => {
@@ -140,8 +138,6 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
 
     init() {
         new TextureLoader().loadAsync(`textures/output.webp`).then((texture: Texture) => {
-            texture.minFilter = LinearFilter;;
-            texture.magFilter = LinearFilter;
             this.material.uniforms.diffuseTexture.value = texture;
             this.material.uniforms.cols.value = this.spriteInfo.cols;
             this.material.uniforms.rows.value = this.spriteInfo.rows;
@@ -168,7 +164,6 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
     }
 
     updateParticles(timeElapsed: number): void {
-        const V_DAMP_FACTOR = 0.1;
         const color = new Color();
         this.particles.forEach((p: Particle) => {
             p.life += timeElapsed;
@@ -179,9 +174,7 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
             p.alpha = this.alphaSpline.get(t);
             p.size = this.sizeSpline.get(t);
             p.colour.copy(this.colorSpline.getResult(t, color));
-
-            // Slows the particle toward the end of its life
-            p.position.add(p.velocity.clone().multiplyScalar((1 - t) * V_DAMP_FACTOR));
+            p.position.add(p.velocity.clone().multiplyScalar(this.velocitySpline.get(t)).multiplyScalar(0.006));
 
             const frameProgress = Math.floor((p.life / 1000) * p.frameRate);
             p.frameIndex = frameProgress % p.totalFrames;
