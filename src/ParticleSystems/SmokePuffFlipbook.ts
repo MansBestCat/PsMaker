@@ -55,7 +55,7 @@ void main() {
   vec2 uv = uvOffset + coords * uvScale;
   vec4 tex = texture2D(diffuseTexture, uv);
 
-  gl_FragColor = tex * vColour;
+  gl_FragColor = vec4(tex.rgb, tex.a * vColour.a);
 }
 
   
@@ -135,10 +135,11 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
     }
 
     init() {
-        new TextureLoader().loadAsync(`textures/smoke.png`).then((texture: Texture) => {
-            texture.minFilter = LinearFilter;
+        new TextureLoader().loadAsync(`textures/output.webp`).then((texture: Texture) => {            
+            texture.minFilter = LinearFilter;;
             texture.magFilter = LinearFilter;
-            this.material.uniforms.diffuseTexture.value = texture;
+            this.material.uniforms.diffuseTexture.value = texture;            
+            
         }).catch((err) => {
             console.error(`${Utility.timestamp()} Could not get texture`);
         });
