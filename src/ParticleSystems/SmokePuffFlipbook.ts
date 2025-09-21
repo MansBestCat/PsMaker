@@ -64,6 +64,10 @@ void main() {
 export class SmokePuffFlipbook extends ParticleSystemBase {
     maxParticleLife = 4000;
 
+    spriteInfo = {
+        rows: 8, cols: 8
+    }
+
     alphaSpline: LinearSpline;
     colorSpline: LinearSplineOut;
     sizeSpline: LinearSpline;
@@ -81,8 +85,8 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
             pointMultiplier: {
                 value: window.innerHeight / (2.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))
             },
-            cols: { value: 8 },
-            rows: { value: 8 }
+            cols: { value: undefined },
+            rows: { value: undefined }
         };
 
         this.material = new ShaderMaterial({
@@ -135,13 +139,15 @@ export class SmokePuffFlipbook extends ParticleSystemBase {
     }
 
     init() {
-        new TextureLoader().loadAsync(`textures/output.webp`).then((texture: Texture) => {            
+        new TextureLoader().loadAsync(`textures/output.webp`).then((texture: Texture) => {
             texture.minFilter = LinearFilter;;
             texture.magFilter = LinearFilter;
-            this.material.uniforms.diffuseTexture.value = texture;            
-            
+            this.material.uniforms.diffuseTexture.value = texture;
+            this.material.uniforms.cols.value = this.spriteInfo.cols;
+            this.material.uniforms.rows.value = this.spriteInfo.rows;
+
         }).catch((err) => {
-            console.error(`${Utility.timestamp()} Could not get texture`);
+            console.error(`${Utility.timestamp()} Could not get texture: ${JSON.stringify(err)}`);
         });
     }
 
